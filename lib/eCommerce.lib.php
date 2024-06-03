@@ -89,6 +89,11 @@ function ecommercengConfigSitePrepareHead($object)
 	$head[$h][2] = 'about';
 	$h++;
 
+	$head[$h][0] = dol_buildpath("/ecommerceng/admin/changelog.php", 1);
+    $head[$h][1] = $langs->trans("OpenDsiChangeLog");
+    $head[$h][2] = 'changelog';
+    $h++;
+
 	return $head;
 }
 

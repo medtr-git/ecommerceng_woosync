@@ -185,7 +185,7 @@ ECommerceConfirmUpdatePriceLevel                                                
 ThirdPartyForNonLoggedUsers                                                                         =Tiers générique de recueil des clients sans compte créé
 SynchUnkownCustomersOnThirdParty                                                                    =Tiers générique auquel seront rattachées les commandes de clients sans compte
 ECommerceDontSearchCompanyByNameAndZip                                                              =Recherche par nom et code postal
-ECommerceDontSearchCompanyByNameAndZipDescription                                                   =Ne pas rechercher le tiers Dolibarr graçe au nom et code postal fournit par WooCommerce
+ECommerceDontSearchCompanyByNameAndZipDescription                                                   =Ne pas rechercher le tiers Dolibarr grâce au nom et code postal fournit par WooCommerce
 ECommerceDontUpdateDolibarrCompany                                                                  =Mise à jour du tiers
 ECommerceDontUpdateDolibarrCompanyDescription                                                       =Ne pas mettre à jour le tiers de Dolibarr lorsqu'il existe déja dans dolibarr
 
@@ -193,7 +193,7 @@ ECommerceDontUpdateDolibarrCompanyDescription                                   
 ECommerceWordpressAuthenticationOptions                                                             =Paramètres de connexion à WordPress
 ECommerceWordpressAuthenticationSetup                                                               =(Allez sur <a class="notasortlink" href="%s" target="_blank">cette page</a> , puis configurer la connexion)
 ECommerceWordpressAuthenticationType                                                                =Type d'authentification
-ECommerceWordpressAuthenticationTypeDescription                                                     =Choissiez entre la connexion interne Wordpress avec un mot de passe d'application situé sur un utilisateur<br>Ou une authentification JWT grâçe à l'extension "WordPress REST API Authentication" de miniOrange
+ECommerceWordpressAuthenticationTypeDescription                                                     =Choissiez entre la connexion interne Wordpress avec un mot de passe d'application situé sur un utilisateur<br>Ou une authentification JWT grâce à l'extension "WordPress REST API Authentication" de miniOrange
 ECommerceWordpressAuthenticationTypeWordpressApplication                                            =Mot de passe d'application (Wordpress)
 ECommerceWordpressAuthenticationTypeJWTAuthentication                                               =Authentification JWT
 ECommerceWordpressAuthenticationLogin                                                               =Identifiant
@@ -312,21 +312,21 @@ ECommerceUpdateRemoteCompanyLinkWhenMergeCompany                                
 ECommerceSynchronizeStockToECommerce                                                                =Synchronisation du stock du produit sur le site %s.
 
 ECommerceCreateOrder                                                                                =Créer la commande
-ECommerceCreateOrderDescription                                                                     =Activer la création de la commande a la synchronisation de la commande
+ECommerceCreateOrderDescription                                                                     =Activer la création de la commande à la synchronisation de la commande
 ECommerceCreateInvoice                                                                              =Créer la facture
-ECommerceCreateInvoiceDescription                                                                   =Activer la création de la facture a la synchronisation de la commande
-ECommerceCreateInvoiceType                                                                          =Type la facture
-ECommerceCreateInvoiceTypeDescription                                                               =Type la facture créée a la synchronisation de la commande
+ECommerceCreateInvoiceDescription                                                                   =Activer la création de la facture à la synchronisation de la commande
+ECommerceCreateInvoiceType                                                                          =Type de la facture
+ECommerceCreateInvoiceTypeDescription                                                               =Type de la facture créée à la synchronisation de la commande
 ECommerceCreateInvoiceDepositType                                                                   =
 ECommerceCreateInvoiceDepositTypeDescription                                                        =
 ECommerceCreateInvoiceDepositValue                                                                  =Montant ou pourcentage
 ECommerceCreateInvoiceDepositValueDescription                                                       =
 ECommerceCreateSupplierInvoiceFromFee                                                               =Créer la facture fournisseur à partir des frais
-ECommerceCreateSupplierInvoiceFromFeeDescription                                                    =Créer la facture fournisseur à partir des frais lors de la creation de la facture
+ECommerceCreateSupplierInvoiceFromFeeDescription                                                    =Créer la facture fournisseur à partir des frais lors de la création de la facture
 ECommerceFeeLineAsItemLine                                                                          =Considérer les lignes de frais comme des lignes de services
 ECommerceFeeLineAsItemLineDescription                                                               =Considérer les lignes de frais comme des lignes de services lors de la création de la commande/facture
 ECommerceSendInvoiceByMail                                                                          =Envoyer la facture par courriel
-ECommerceSendInvoiceByMailDescription                                                               =Envoyer la facture par courriel après la création avec succes de la facture
+ECommerceSendInvoiceByMailDescription                                                               =Envoyer la facture par courriel après la création avec succès de la facture
 ECommerceCreateOrderDescription                                                                     =Actions associées lors de la récupération des commandes WooCommerce (renseigner les modes de paiements associés à WooCommerce)
 ECommerceCreateInvoiceIfAmount0                                                                     =Créer la facture même si le montant est nul
 ECommerceCreateInvoiceIfAmount0Description                                                          =Créer la facture même si le montant est nul lors de la synchronisation de la commande
@@ -359,6 +359,7 @@ RestrictSyncToCompanyRemoteID                                                   
 RestrictSyncToProductRemoteID                                                                       =Limiter la synchronisation des produits aux ID distants suivants (product_id, product_id|variation_id, ...)
 RestrictSyncToOrderRemoteID                                                                         =Limiter la synchronisation des commandes aux ID distants suivants (order_id, order_id, ...)
 DontSyncProductWhenSyncOrders                                                                       =Ne pas synchroniser les produits lors de la synchronisation des commandes
+RestrictNbInSync=Limiter le nombre d'enregistrements d'un même objet à synchroniser dans une même requête
 
 ECommerceSiteWebHooksSetup                                                                          =Configuration des Crochets Web (WebHooks)
 ECommerceSiteWebHooksUrl                                                                            =URL de livraison
@@ -366,7 +367,7 @@ ECommerceSiteWebHooksUrlDescription                                             
 ECommerceSiteWebHooksSecret                                                                         =Secret
 ECommerceSiteWebHooksSecretDescription                                                              =La clé secrète est utilisée pour générer un hachage du crochet Web livré et indiqué dans les en-têtes de requête
 ECommerceSiteWebHooksVolumetryAlert                                                                 =Alerte volumétrie
-ECommerceSiteWebHooksVolumetryAlertDescription                                                      =Envoie un email grace a une tache planifié si le nombre de hooks en attente de traitement depasse cette valeur (0 signifie qu'il n'y a pas de verification)
+ECommerceSiteWebHooksVolumetryAlertDescription                                                      =Envoie un email grâce à une tâche planifiée si le nombre de hooks en attente de traitement dépasse cette valeur (0 signifie qu'il n'y a pas de vérification)
 ECommerceShippingService                                                                            =Frais de port
 ECommerceShippingServiceDescription                                                                 =Service utilisé pour la gestion des frais de port
 ECommerceDiscountCodeService                                                                        =Code promo
@@ -403,7 +404,7 @@ ECommerceWoocommerceOrderFirstDateForECommerceToDolibarr                        
 ECommerceWoocommerceOrderFirstDateForECommerceToDolibarrDescription                                 =Les commandes dont la date de création est antérieure seront ignorées
 
 ECommerceWoocommerceOrderMetaDataInProductLineToDescriptionForECommerceToDolibarr                   =Méta-données sur ligne de produit
-ECommerceWoocommerceOrderMetaDataInProductLineToDescriptionForECommerceToDolibarrDescription        =Ajoute les méta-données des lignes de produit de la commandes WooCommerce dans la description des lignes de produit dans la commande Dolibarr<br>Les méta-données des lignes de produits des commandes WooCommerce doivent posséder les propriétées 'display_key' et 'display_value' pour que cette fonctionnalité fonctionne
+ECommerceWoocommerceOrderMetaDataInProductLineToDescriptionForECommerceToDolibarrDescription        =Ajoute les méta-données des lignes de produit de la commande WooCommerce dans la description des lignes de produit dans la commande Dolibarr<br>Les méta-données des lignes de produits des commandes WooCommerce doivent posséder les propriétées 'display_key' et 'display_value' pour que cette fonctionnalité fonctionne
 ECommerceWoocommerceOrderFilterMetaDataInProductLineToDescriptionForECommerceToDolibarr             =Méta-données sur ligne de produit
 ECommerceWoocommerceOrderFilterMetaDataInProductLineToDescriptionForECommerceToDolibarrDescription  =Liste des clés des méta-données à inclure ou non dans la description (séparées par des virgules)
 ECommerceExclude                                                                                    =Exclure
