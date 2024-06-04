@@ -1,7 +1,7 @@
 # ChangeLog
 
-## [14.0.2] - 03-06-2024
-- Changement de marque, page support, ajout CI, corrections de coquilles.
+## [14.0.2] - 04-06-2024
+- Changement de marque, page support, ajout CI, corrections de coquilles, lien documentation.
 
 ## [14.0.1]
 - Changement de numérotation

@@ -1,4 +1,16 @@
-# WooSync, synchronize Woocommerce and Dolibarr
+WooSync
+========================
+Module de synchronisation entre Dolibarr et les plateformes e-commerce WooCommerce.
+
+
+## Documentation
+
+
+Lien vers notre [documentation](https://link.easya.solutions/woosync_doc)
+
+
+
+<!-- # WooSync, synchronize Woocommerce and Dolibarr
 
 ## You have to rename the folder to ecommerceng when you download the zip file or make a git clone. In other case the module will not work
 
@@ -11,5 +23,5 @@ https://link.easya.solutions/woosync_doc
 Utilisation à vos risques et périls. Easya Solutions ne fournit pas de support à l’utilisation, à l'installation ni de correction de bugs pour ce logiciel. Pour cela vous devrez faire l’acquisition d’un crédit temps auprès de notre service commercial : https://www.easya.solutions/contact. Vous pouvez également nous consulter pour toute prestation d’installation, configuration ou développement. 
 
 Avant toute utilisation, merci de prendre connaissance de la documentation pour vérifier si le module répond en l'état à vos besoins
-https://link.easya.solutions/woosync_doc
+https://link.easya.solutions/woosync_doc -->
 
