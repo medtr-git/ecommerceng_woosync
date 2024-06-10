@@ -359,7 +359,7 @@ RestrictSyncToCompanyRemoteID                                                   
 RestrictSyncToProductRemoteID                                                                       =Limiter la synchronisation des produits aux ID distants suivants (product_id, product_id|variation_id, ...)
 RestrictSyncToOrderRemoteID                                                                         =Limiter la synchronisation des commandes aux ID distants suivants (order_id, order_id, ...)
 DontSyncProductWhenSyncOrders                                                                       =Ne pas synchroniser les produits lors de la synchronisation des commandes
-RestrictNbInSync=Limiter le nombre d'enregistrements d'un même objet à synchroniser dans une même requête
+RestrictNbInSync                                                                                    =Limiter le nombre d'enregistrements d'un même objet à synchroniser dans une même requête
 
 ECommerceSiteWebHooksSetup                                                                          =Configuration des Crochets Web (WebHooks)
 ECommerceSiteWebHooksUrl                                                                            =URL de livraison

@@ -31,7 +31,7 @@ dol_include_once('/ecommerceng/lib/eCommerce.lib.php');
 dol_include_once('/ecommerceng/core/modules/modECommerceNg.class.php');
 
 $langs->load("admin");
-$langs->load("ecommerceng@ecommerceng");
+$langs->load("ecommerce@ecommerceng");
 $langs->load("opendsi@ecommerceng");
 
 if (!$user->admin && !$user->rights->ecommerceng->site) accessforbidden();

@@ -33,7 +33,7 @@ dol_include_once('/ecommerceng/lib/eCommerce.lib.php');
 
 use OAuth\Common\Storage\DoliStorage;
 
-$langs->loadLangs(array("admin", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerce", "woocommerce@ecommerceng", "opendsi@ecommerceng"));
+$langs->loadLangs(array("admin", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "woocommerce@ecommerceng", "opendsi@ecommerceng"));
 
 if (!$user->admin && !$user->rights->ecommerceng->site) accessforbidden();
 
