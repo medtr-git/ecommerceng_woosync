@@ -32,7 +32,7 @@ dol_include_once('/ecommerceng/lib/eCommerce.lib.php');
 dol_include_once('/ecommerceng/class/html.formecommerceng.class.php');
 dol_include_once('/ecommerceng/class/data/eCommerceRemoteWarehouses.class.php');
 
-$langs->loadLangs(array("admin", "stocks", "ecommerce@ecommerceng", "woocommerce@ecommerceng"));
+$langs->loadLangs(array("admin", "stocks", "ecommerce@ecommerceng", "woocommerce@ecommerceng", "opendsi@ecommerceng"));
 
 if (!$user->admin && !$user->rights->ecommerceng->site) accessforbidden();
 
@@ -135,7 +135,7 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 $formecommerceng = new FormECommerceNg($db);
 
-$wikihelp='';
+$wikihelp='EN:ECommerceNg_En|FR:ECommerceNg_Fr|ES:ECommerceNg_Es';
 llxHeader('', $langs->trans("ECommerceSetup"), $wikihelp);
 
 $formconfirm = '';
@@ -163,7 +163,7 @@ include dol_buildpath('/ecommerceng/admin/tpl/selectsite.tpl.php');
 
 $head=ecommercengConfigSitePrepareHead($object);
 
-dol_fiche_head($head, 'stock', $langs->trans("Module107100Name"), 0, 'eCommerce@ecommerceng');
+print dol_get_fiche_head($head, 'stock', $langs->trans("Module107100Name"), 0, 'opendsi@ecommerceng');
 
 if (!empty($object->parameters['enable_warehouse_plugin_support'])) {
 	print '<div class="tabsAction tabsActionNoBottom">';

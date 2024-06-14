@@ -1,6 +1,9 @@
 # ChangeLog
 
-## 14.0.1
+## [14.0.2] - 04-06-2024
+- Changement de marque, page support, ajout CI, corrections de coquilles, lien documentation.
+
+## [14.0.1]
 - Changement de numérotation
 
 ## 4.1.72
@@ -884,3 +887,7 @@
 ## 3.9.0.0
 
 - Initial version.
+
+
+[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.2...HEAD
+[14.0.2]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.2
