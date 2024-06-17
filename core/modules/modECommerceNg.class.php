@@ -58,7 +58,7 @@ class modECommerceNg extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Module to synchronise Dolibarr with ECommerce platform (currently ecommerce supported: WooCommerce)";
 		$this->descriptionlong = "See page https://wiki.dolibarr.org/index.php/Module_Magento_EN for more information";
-		$this->editor_name      = '<b>Easya Solutions</b>)';
+		$this->editor_name      = '<b>Easya Solutions</b>';
         $this->editor_web       = 'https://easya.solutions';
         $this->editor_url       = "https://easya.solutions";
         $this->editor_email     = 'support@easya.solutions';
