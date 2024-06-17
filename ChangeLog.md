@@ -1,5 +1,8 @@
 # ChangeLog
 
+## [14.0.3] - 17-06-2024
+- Ajout version de PHP.
+
 ## [14.0.2] - 04-06-2024
 - Changement de marque, page support, ajout CI, corrections de coquilles, lien documentation.
 
@@ -889,5 +892,6 @@
 - Initial version.
 
 
-[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.2...HEAD
+[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.3...HEAD
+[14.0.3]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.3
 [14.0.2]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.2
