@@ -6,7 +6,9 @@ if (is_object($site)) {
 	dol_include_once("/ecommerceng/lib/eCommerce.lib.php");
 	$linkback = '<a href="index.php">' . $langs->trans("BackToListOfSites") . '</a>';
 
-	print_fiche_titre($langs->trans('ECommerceSiteSynchro') . ' ' . $site->name, $linkback, 'eCommerceTitle@ecommerceng');
+	//print_fiche_titre($langs->trans('ECommerceSiteSynchro') . ' ' . $site->name, $linkback, 'eCommerceTitle@ecommerceng');
+
+	print load_fiche_titre($langs->trans("ECommerceSiteSynchro"), $linkback, 'title_setup');
 
 	print '<br>';
 
@@ -15,7 +17,9 @@ if (is_object($site)) {
 	$head[1][1] = $langs->trans("Direction") . ' : Ecommerce -> Dolibarr';
 	$head[1][2] = 'ecommerce2dolibarr';
 
-	dol_fiche_head($head, 'ecommerce2dolibarr', '');
+	// dol_fiche_head($head, 'ecommerce2dolibarr', '');
+
+	print dol_get_fiche_head($head, 'ecommerce2dolibarr', $langs->trans("Module107100Name"), 0, 'opendsi@ecommerceng');
 
 	$disabled = $synchRights != true && empty($conf->global->ECOMMERCE_PROCESSING_WEBHOOK_SYNCHRONIZATION);
 

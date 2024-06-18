@@ -54,18 +54,18 @@ class modECommerceNg extends DolibarrModules
 		$this->family = 'easya';
 		$this->familyinfo = array('easya' => array('position' => '001', 'label' => $langs->trans("easyaFamily")));
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = 'EcommerceNg';        //  Must be same than value used for if $conf->ecommerceng->enabled
+        $this->name = preg_replace('/^mod/i', '', get_class($this));        //  Must be same than value used for if $conf->ecommerceng->enabled
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Module to synchronise Dolibarr with ECommerce platform (currently ecommerce supported: WooCommerce)";
 		$this->descriptionlong = "See page https://wiki.dolibarr.org/index.php/Module_Magento_EN for more information";
-		$this->editor_name      = '<b>Easya Solutions</b> (Ex Open-Dsi)';
+		$this->editor_name      = '<b>Easya Solutions</b>';
         $this->editor_web       = 'https://easya.solutions';
         $this->editor_url       = "https://easya.solutions";
         $this->editor_email     = 'support@easya.solutions';
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = file_get_contents(__DIR__.'/../../VERSION');
-		$this->url_last_version = 'https://git.open-dsi.fr/dolibarr-extension/'.strtolower($this->name).'/-/raw/2022.5.3/VERSION';
+		$this->url_last_version = 'https://git.open-dsi.fr/dolibarr-extension/'.strtolower($this->name).'/-/raw/2024/VERSION';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -114,8 +114,9 @@ class modECommerceNg extends DolibarrModules
 		// Dependencies
 		$this->depends = array("modSociete", "modProduct", "modCategorie", "modWebServices");        // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();    // List of modules id to disable if this one is disabled
-		$this->phpmin = array(5, 3);                    // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3, 9);    // Minimum version of Dolibarr required by module
+        $easya_info = json_decode(file_get_contents(__DIR__.'/../../.easya_info.json'));
+        $this->phpmin = explode('.', $easya_info->php_min_version);                    // Minimum version of PHP required by module
+        $this->need_dolibarr_version = explode('.', $easya_info->dlb_min_version);    // Minimum version of Dolibarr required by module
 		$this->langfiles = array("ecommerce@ecommerceng", "woocommerce@ecommerceng");
 
 		// Constants

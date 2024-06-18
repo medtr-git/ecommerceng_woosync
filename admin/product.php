@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 dol_include_once('/ecommerceng/lib/eCommerce.lib.php');
 dol_include_once('/ecommerceng/admin/class/data/eCommerceDict.class.php');
 
-$langs->loadLangs(array("admin", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "woocommerce@ecommerceng"));
+$langs->loadLangs(array("admin", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "woocommerce@ecommerceng", "opendsi@ecommerceng"));
 
 if (!$user->admin && !$user->rights->ecommerceng->site) accessforbidden();
 
@@ -265,7 +265,7 @@ $formproduct = new FormProduct($db);
 $formaccounting = new FormAccounting($db);
 
 $v10p = version_compare(DOL_VERSION, "10.0.0") >= 0;
-$wikihelp='';
+$wikihelp='EN:ECommerceNg_En|FR:ECommerceNg_Fr|ES:ECommerceNg_Es';
 llxHeader('', $langs->trans("ECommerceSetup"), $wikihelp, '', 0, 0, array(
 	'/ecommerceng/js/form.js',
 ));
@@ -299,7 +299,7 @@ include dol_buildpath('/ecommerceng/admin/tpl/selectsite.tpl.php');
 
 $head=ecommercengConfigSitePrepareHead($object);
 
-dol_fiche_head($head, 'product', $langs->trans("Module107100Name"), 0, 'eCommerce@ecommerceng');
+print dol_get_fiche_head($head, 'product', $langs->trans("Module107100Name"), 0, 'opendsi@ecommerceng');
 
 print '<div class="tabsAction tabsActionNoBottom">';
 print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=synchronize_attributes&token='.ecommercengNewToken().'">'.$langs->trans('ECommerceWoocommerceUpdateDictAttributes').'</a>';
