@@ -33,7 +33,7 @@ dol_include_once('/ecommerceng/lib/eCommerce.lib.php');
 
 use OAuth\Common\Storage\DoliStorage;
 
-$langs->loadLangs(array("admin", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "woocommerce@ecommerceng"));
+$langs->loadLangs(array("admin", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "woocommerce@ecommerceng", "opendsi@ecommerceng"));
 
 if (!$user->admin && !$user->rights->ecommerceng->site) accessforbidden();
 
@@ -278,7 +278,7 @@ if ($action == 'set_options') {
 
 $form = new Form($db);
 
-$wikihelp='';
+$wikihelp='EN:ECommerceNg_En|FR:ECommerceNg_Fr|ES:ECommerceNg_Es';
 llxHeader('', $langs->trans("ECommerceSetup"), $wikihelp);
 
 $formconfirm = '';
@@ -306,7 +306,7 @@ include dol_buildpath('/ecommerceng/admin/tpl/selectsite.tpl.php');
 
 $head=ecommercengConfigSitePrepareHead($object);
 
-dol_fiche_head($head, 'settings', $langs->trans("Module107100Name"), 0, 'eCommerce@ecommerceng');
+print dol_get_fiche_head($head, 'settings', $langs->trans("Module107100Name"), 0, 'opendsi@ecommerceng');
 
 if ($object->id > 0) {
 	print '<div class="tabsAction tabsActionNoBottom">';

@@ -1,5 +1,14 @@
 # ChangeLog
 
+## [14.0.3] - 17-06-2024
+- Ajout version de PHP.
+
+## [14.0.2] - 04-06-2024
+- Changement de marque, page support, ajout CI, corrections de coquilles, lien documentation.
+
+## [14.0.1]
+- Changement de numérotation
+
 ## 4.1.75
 - Correction de la recuperation du libéllé du produit ('MISSING LABEL' lors de la synchro d'un produit du site vers dolibarr) et que l'on est en multi-langues
 
@@ -890,3 +899,8 @@
 ## 3.9.0.0
 
 - Initial version.
+
+
+[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.3...HEAD
+[14.0.3]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.3
+[14.0.2]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.2

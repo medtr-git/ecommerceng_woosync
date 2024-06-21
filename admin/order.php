@@ -34,7 +34,7 @@ dol_include_once('/ecommerceng/lib/eCommerce.lib.php');
 dol_include_once('/ecommerceng/admin/class/data/eCommerceDict.class.php');
 dol_include_once('/ecommerceng/class/data/eCommercePaymentGateways.class.php');
 
-$langs->loadLangs(array("admin", "orders", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "woocommerce@ecommerceng"));
+$langs->loadLangs(array("admin", "orders", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "woocommerce@ecommerceng", "opendsi@ecommerceng"));
 
 if (!$user->admin && !$user->rights->ecommerceng->site) accessforbidden();
 
@@ -267,7 +267,7 @@ if ($action == 'set_options') {
 $form = new Form($db);
 $formmail = new FormMail($db);
 
-$wikihelp='';
+$wikihelp='EN:ECommerceNg_En|FR:ECommerceNg_Fr|ES:ECommerceNg_Es';
 llxHeader('', $langs->trans("ECommerceSetup"), $wikihelp, '', 0, 0, array(
 	'/ecommerceng/js/form.js',
 ));
@@ -297,7 +297,7 @@ include dol_buildpath('/ecommerceng/admin/tpl/selectsite.tpl.php');
 
 $head=ecommercengConfigSitePrepareHead($object);
 
-dol_fiche_head($head, 'order_invoice', $langs->trans("Module107100Name"), 0, 'eCommerce@ecommerceng');
+print dol_get_fiche_head($head, 'order_invoice', $langs->trans("Module107100Name"), 0, 'opendsi@ecommerceng');
 
 print '<div class="tabsAction tabsActionNoBottom">';
 print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=synchronize_payment_gateways&token='.ecommercengNewToken().'">'.$langs->trans('ECommerceUpdatePaymentGateways').'</a>';
