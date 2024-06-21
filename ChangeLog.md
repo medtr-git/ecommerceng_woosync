@@ -9,6 +9,15 @@
 ## [14.0.1]
 - Changement de numérotation
 
+## 4.1.75
+- Correction de la recuperation du libéllé du produit ('MISSING LABEL' lors de la synchro d'un produit du site vers dolibarr) et que l'on est en multi-langues
+
+## 4.1.74
+- Correction de l'enregistrement d'un champ complementaire d'un produit modifier (synchro Dolibarr vers Site)
+
+## 4.1.73
+- Correction de la recuperation du libéllé du produit ('MISSING LABEL' lors de la synchro d'un produit du site vers dolibarr)
+
 ## 4.1.72
 - Correction 'MISSING LABEL' lors de la synchro d'un produit du site vers dolibarr
 
