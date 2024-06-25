@@ -39,6 +39,8 @@ ECommerceWoocommerceGetAllWoocommercePaymentGateways                 =Erreur de 
 ECommerceWoocommerceGetAllWoocommerceRemoteWarehouses                =Erreur de récupération des données des entrepots distants sur le site '%s':
 ECommerceWoocommerceGetTranslatedProductVariation                    =Erreur de récupération de la traduction 'id:%s' de la variation 'id:%s' du produit distant 'id:%s' sur le site '%s':
 ECommerceWoocommerceErrorGetRemoteProduct                            =Erreur de récupération du produit distant 'id:%s' sur le site '%s':
+ECommerceWoocommerceGetAllWoocommerceRemoteShippingModes             =Erreur de récupération des données des zones de transport distants sur le site '%s':
+ECommerceWoocommerceGetAllWoocommerceRemoteShippingZoneMethods       =Erreur de récupération des données des modes de transport distants sur le site '%s' et la zone (ID distant : %s):
 
 ECommerceWoocommerceStatusProductSupported                           = Statuts supportés
 ECommerceWoocommerceStatusProductSupportedDescription                = Liste des statuts supportés pour la synchronisation.(vide pour tous les statuts; liste de valeurs séparées par des virgules)<br>Seules les valeurs retournées par l'API sont supportées. ex: draft, pending, private, publish, ...
@@ -169,7 +171,7 @@ ECommerceWoocommerceErrorGetOrderData                                = Erreur lo
 ECommerceWooCommerceErrorLanguageMatchNotFound                       = La correspondance de langue pour le code '%s' et site ID '%s' n'as pas été trouvée dans le dictionnaire 'Liste des langues sur Woocommerce'
 
 ECommerceWoocommerceGetRemoteProduct                                 = Récupération du produit distant (ID distant: %s) sur le site '%s'
-ECommerceErrorWarehouseIdNotSpecifiedForTheLine                      = L'entrepôt distant n'a pas été trouver pour la ligne de produit
+ECommerceErrorWarehouseIdNotSpecifiedForTheLine                      = L'entrepôt distant n'a pas été trouver pour la ligne de produit %s
 ECommerceErrorWarehouseIdNotConfiguredForRemoteWarehouse             = L'entrepôt dolibarr n'as pas été configuré pour l'entrepôt distant (ID: %s) sur le site '%s'
 ECommerceErrorWhenMovementStockOnDifferentWarehouse                  = Erreur lors de la mise a jour des stocks des produits sur differents entrepots
 ECommerceErrorValidOrderWarehouseNotConfigured                       = L'entrepot par defaut pour la validation de la commande n'est pas configuré pour le site '%s'

@@ -867,7 +867,7 @@ class eCommerceSite // extends CommonObject
 		// stock
 		if (!empty($this->parameters['enable_warehouse_plugin_sl_support'])) { $this->parameters['enable_warehouse_plugin_support'] = 'slfw'; unset($this->parameters['enable_warehouse_plugin_sl_support']); }
 		if (!isset($this->parameters['order_actions']['valid_invoice_fk_warehouse'])) $this->parameters['order_actions']['valid_invoice_fk_warehouse'] = $this->parameters['order_actions']['valid_order_fk_warehouse'];
-		if (!isset($this->parameters['order_actions']['valid_supplier_invoice_fk_warehouse'])) $this->parameters['order_actions']['valid_supplier_invoice_fk_warehouse'] = $this->parameters['order_actions']['valid_order_fk_warehouse'];
+		if (!isset($this->parameters['order_actions']['valid_supplier_invoice_fk_warehouse'])) unset($this->parameters['order_actions']['valid_supplier_invoice_fk_warehouse']);
 		// extra fields
 		$table_elements = [ 'societe', 'product', 'commande', 'commandedet' ];
 		foreach ($table_elements as $table_element) {

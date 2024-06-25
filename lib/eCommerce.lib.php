@@ -853,6 +853,113 @@ function ecommerceng_update_remote_warehouses($db, $site)
 	return true;
 }
 
+function ecommerceng_update_remote_shipping_zone_methods($db, $site)
+{
+	global $conf, $langs;
+	$langs->load('woocommerce@ecommerceng');
+
+	if (empty($site->parameters['enable_warehouse_depending_on_shipping_zone_method'])) {
+		return 1;
+	}
+
+	dol_include_once('/ecommerceng/class/business/eCommerceSynchro.class.php');
+	$synchro = new eCommerceSynchro($db, $site, 0, 0);
+
+	dol_syslog("site.php Try to connect to eCommerce site " . $site->name);
+	$result = $synchro->connect();
+	if (!$result) {
+		setEventMessages($synchro->error, $synchro->errors, 'errors');
+		return false;
+	}
+
+	$remote_shipping_zones_list = $synchro->getAllRemoteShippingZones();
+	if ($remote_shipping_zones_list === false) {
+		setEventMessages($synchro->error, $synchro->errors, 'errors');
+		return false;
+	}
+
+	// Get all shipping zone methods
+	dol_include_once('/ecommerceng/class/data/eCommerceRemoteShippingZoneMethods.class.php');
+	$remote_shipping_zone_methods = new eCommerceRemoteShippingZoneMethods($db);
+	$currentRemoteShippingZoneMethods = $remote_shipping_zone_methods->get_all($site->id);
+	if (!is_array($currentRemoteShippingZoneMethods) && $currentRemoteShippingZoneMethods < 0) {
+		setEventMessages($remote_shipping_zone_methods->error, $remote_shipping_zone_methods->errors, 'errors');
+		return false;
+	}
+
+	$finalRemoteShippingZoneMethods = array();
+
+	// Add remotes shipping modes
+	foreach ($remote_shipping_zones_list as $key1 => $remote_shipping_zone_infos) {
+		$finalRemoteShippingZoneMethods[$key1] = array(
+			'remote_id' => $remote_shipping_zone_infos['remote_id'],
+			'remote_name' => $remote_shipping_zone_infos['name'],
+			'remote_order' => $remote_shipping_zone_infos['order'],
+			'old_entry' => 0,
+		);
+
+		$remote_shipping_zone_methods_list = $synchro->getAllRemoteShippingZoneMethods($remote_shipping_zone_infos['remote_id']);
+		if ($remote_shipping_zone_methods_list === false) {
+			setEventMessages($synchro->error, $synchro->errors, 'errors');
+			return false;
+		}
+
+		foreach ($remote_shipping_zone_methods_list as $key2 => $infos) {
+			$current_method = isset($currentRemoteShippingZoneMethods[$key1]['methods'][$key2]) ? $currentRemoteShippingZoneMethods[$key1]['methods'][$key2] : [];
+
+			$finalRemoteShippingZoneMethods[$key1]['methods'][$key2] = array(
+				'remote_zone_id' => $remote_shipping_zone_infos['remote_id'],
+				'remote_instance_id' => $infos['instance_id'],
+				'remote_title' => $infos['title'],
+				'remote_order' => $infos['order'],
+				'remote_enabled' => !empty($infos['enabled']),
+				'remote_method_id' => $infos['method_id'],
+				'remote_method_title' => $infos['method_title'],
+				'remote_method_description' => $infos['method_description'],
+				'warehouse_id' => !empty($current_method['warehouse_id']) && $current_method['warehouse_id'] > 0 ? $current_method['warehouse_id'] : 0,
+				'old_entry' => 0,
+			);
+		}
+	}
+
+	// Add current shipping zones and shipping zone methods who have been deleted
+	foreach ($currentRemoteShippingZoneMethods as $key1 => $remote_shipping_zone_infos) {
+		if (!isset($finalRemoteShippingZoneMethods[$key1])) {
+			$finalRemoteShippingZoneMethods[$key1] = array(
+				'remote_id' => $remote_shipping_zone_infos['remote_id'],
+				'remote_name' => $remote_shipping_zone_infos['remote_name'],
+				'remote_order' => $remote_shipping_zone_infos['remote_order'],
+				'old_entry' => 1,
+			);
+		}
+
+		foreach ($remote_shipping_zone_infos['methods'] as $key2 => $infos) {
+			if (!isset($finalRemoteShippingZoneMethods[$key1]['methods'][$key2])) {
+				$finalRemoteShippingZoneMethods[$key1]['methods'][$key2] = array(
+					'remote_zone_id' => $infos['remote_zone_id'],
+					'remote_instance_id' => $infos['remote_instance_id'],
+					'remote_title' => $infos['remote_title'],
+					'remote_order' => $infos['remote_order'],
+					'remote_enabled' => false,
+					'remote_method_id' => $infos['remote_method_id'],
+					'remote_method_title' => $infos['remote_method_title'],
+					'remote_method_description' => $infos['remote_method_description'],
+					'warehouse_id' => $infos['warehouse_id'],
+					'old_entry' => 1,
+				);
+			}
+		}
+	}
+
+	$result = $remote_shipping_zone_methods->set($site->id, $finalRemoteShippingZoneMethods);
+	if ($result < 0) {
+		setEventMessages($remote_shipping_zone_methods->error, $remote_shipping_zone_methods->errors, 'errors');
+		return false;
+	}
+
+	return true;
+}
+
 function get_company_by_email($db, $email, $site=0)
 {
 	$email = $db->escape($email);

@@ -166,11 +166,9 @@ SetupOfWarehouseNotDefinedForThisSite                                           
 ECommerceStockSyncDirection                                                                         =Synchronisation des stocks
 ECommerceStockSyncDirectionDescription                                                              =Ce paramètre détermine :<br/>- Si le stock doit être décrémenté dans Dolibarr suite à une décrémentation du stock E-Commerce (rare) ou <br/>- Si le stock E-Commerce doit être remplacé par le stock Dolibarr suite à sa modification (choix commun)
 ECommerceValidOrderWarehouse                                                                        =Validation d'une commande
-ECommerceValidOrderWarehouseDescription                                                             =Entrepot utilisé lors de la validation d'une commande pendant une synchronisation de E-Commerce vers Dolibarr
+ECommerceValidOrderWarehouseDescription                                                             =Entrepot utilisé par défaut lors de la validation d'une commande pendant une synchronisation de E-Commerce vers Dolibarr
 ECommerceValidInvoiceWarehouse                                                                      =Validation d'une facture
-ECommerceValidInvoiceWarehouseDescription                                                           =Entrepot utilisé lors de la validation d'une facture pendant une synchronisation de E-Commerce vers Dolibarr
-ECommerceValidSupplierInvoiceWarehouse                                                              =Validation d'une facture fournisseur
-ECommerceValidSupplierInvoiceWarehouseDescription                                                   =Entrepot utilisé lors de la validation d'une facture fournisseur pendant une synchronisation de E-Commerce vers Dolibarr
+ECommerceValidInvoiceWarehouseDescription                                                           =Entrepot utilisé par défaut lors de la validation d'une facture pendant une synchronisation de E-Commerce vers Dolibarr
 MainSyncSetup                                                                                       =Synchronisation générale
 StockSyncSetup                                                                                      =Synchronisation des stocks
 ErrorModuleSoapRequired                                                                             =Erreur: le module PHP SOAP est requis pour le bon fonctionnement du module.
@@ -338,6 +336,21 @@ ECommerceUpdateRemoteWarehouses                                                 
 ECommerceConfirmUpdateRemoteWarehouses                                                              =Confirmer la mise à jour des entrepôts distants pour ce site ?
 ECommerceRemoteWarehousesUpdated                                                                    =Les entrepôts distants depuis le site ont été mise à jour.
 ECommerceRemoteID                                                                                   =ID distant
+
+ECommerceMovementStockOnValidateOrderOrInvoice                                                      =Parametrage des entrepôts utiliser lors de la validation de la %s
+ECommerceSearchWarehouseOrder                                                                       =Ordre de recherche de l'entrepôt à utilisé lors de la validation pour la ligne de produit :
+ECommerceSearchWarehouseByMultiWarehouseCorrespondence                                              =<br> - Par la configuration multi-entrepots
+ECommerceSearchWarehouseByShippingMethodCorrespondence                                              =<br> - Par la configuration des modes de transport
+ECommerceSearchWarehouseByDefaultWarehouse                                                          =<br> - Par la configuration par défaut
+
+ECommerceRemoteShippingZoneMethodsCorrespondence                                                    =Correspondance des entrpôts avec le mode de transport
+ECommerceUpdateRemoteShippingZoneMethods                                                            =Mise à jour des modes de transport distants
+ECommerceUpdateRemoteShippingMethods                                                                =Mise à jour des modes de transport distants
+ECommerceConfirmUpdateRemoteShippingMethods                                                         =Confirmer la mise à jour des modes de transport distants pour ce site ?
+ECommerceEnableWarehouseDependingOnShippingZoneMethodSupport                                        =Choix de l'entrepot en fonction du mode de transport
+ECommerceEnableWarehouseDependingOnShippingZoneMethodSupportDescription                             =Définir l'entrepot utilisé lors de la validation en fonction du mode de transport<br>(si la commande a plusieurs mode de transport seul le premier rencontrer sera pris en compte)
+ECommerceRemoteShippingZoneMethodsUpdated                                                           =Les modes de transport distants depuis le site ont été mise à jour.
+ECommerceShippingMethodOldEntry                                                                     =Ancien mode de transport
 
 ECommercePaymentGatewaysCorrespondence                                                              =Correspondance des modes de paiements avec le site
 ECommercePaymentGatewayLabel                                                                        =Mode de paiement sur le site
