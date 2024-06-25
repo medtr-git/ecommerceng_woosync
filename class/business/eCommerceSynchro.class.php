@@ -2549,6 +2549,37 @@ class eCommerceSynchro
 	}
 
 	/**
+	 * Get all remote shipping zones
+	 *
+	 * @return array|false    List of shipping zones or false if error
+	 */
+	public function getAllRemoteShippingZones()
+	{
+		$result = $this->eCommerceRemoteAccess->getAllRemoteShippingZones();
+		if (!$result) {
+			$this->error = $this->eCommerceRemoteAccess->error;
+			$this->errors = $this->eCommerceRemoteAccess->errors;
+		}
+		return $result;
+	}
+
+	/**
+	 * Get all remote shipping zone methods
+	 *
+	 * @param	integer			$remote_zone_id		Remote zone ID
+	 * @return	array|false    						List of shipping zone methods or false if error
+	 */
+	public function getAllRemoteShippingZoneMethods($remote_zone_id)
+	{
+		$result = $this->eCommerceRemoteAccess->getAllRemoteShippingZoneMethods($remote_zone_id);
+		if (!$result) {
+			$this->error = $this->eCommerceRemoteAccess->error;
+			$this->errors = $this->eCommerceRemoteAccess->errors;
+		}
+		return $result;
+	}
+
+	/**
 	 * Get all webhooks
 	 *
 	 * @return array|false    List of webhooks or false if error
@@ -4436,10 +4467,28 @@ class eCommerceSynchro
 
 									// Update the order status
 									if (!$error && ($new_order || ($order->statut != $order_data['status']))) {        // Always when creating
-										$warehouse_id = $this->eCommerceSite->parameters['order_actions']['valid_order_fk_warehouse'] > 0 && empty($warehouseByLine) ? $this->eCommerceSite->parameters['order_actions']['valid_order_fk_warehouse'] : 0;
-										if (empty($warehouse_id) && empty($warehouseByLine) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
-											$this->errors[] = $this->langs->trans('ECommerceErrorValidOrderWarehouseNotConfigured', $this->eCommerceSite->name);
-											$error++;
+										// Get default warehouse ID
+										$default_warehouse_id = 0;
+										if (!empty($this->eCommerceSite->parameters['enable_warehouse_depending_on_shipping_zone_method'])) {
+											$default_warehouse_id = $this->getWarehouseFromShippingMethod($order_data['shipping_lines']);
+											if ($default_warehouse_id < 0) {
+												$error++;
+											}
+										}
+										if (!$error && empty($default_warehouse_id)) {
+											$default_warehouse_id = max(0, (int) $this->eCommerceSite->parameters['order_actions']['valid_order_fk_warehouse']);
+										}
+
+										// Set validate warehouse ID if no warehouse plugin support activated and movement stock on validate order set
+										$warehouse_id = 0;
+										if (!$error && empty($this->eCommerceSite->parameters['enable_warehouse_plugin_support']) &&
+											!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1
+										) {
+											$warehouse_id = $default_warehouse_id;
+											if (empty($warehouse_id)) {
+												$this->errors[] = $this->langs->trans('ECommerceErrorValidOrderWarehouseNotConfigured');
+												$error++;
+											}
 										}
 
 										// Valid the order if the distant order is not at the draft status but the order is draft. For set the order ref.
@@ -4451,7 +4500,7 @@ class eCommerceSynchro
 												$this->errors = array_merge($this->errors, $order->errors);
 												$error++;
 											} else {
-												$result = $this->setLinesMovementStockOnDifferentWarehouse($order, $warehouseByLine);
+												$result = $this->setLinesMovementStockOnDifferentWarehouse($order, $warehouseByLine, $default_warehouse_id);
 												if ($result < 0) {
 													$this->errors[] = $this->langs->trans("ECommerceErrorWhenMovementStockOnDifferentWarehouse");
 													$error++;
@@ -4485,7 +4534,7 @@ class eCommerceSynchro
 													$this->errors = array_merge($this->errors, $order->errors);
 													$error++;
 												} else {
-													$result = $this->setLinesMovementStockOnDifferentWarehouse($order, $warehouseByLine, true);
+													$result = $this->setLinesMovementStockOnDifferentWarehouse($order, $warehouseByLine, $default_warehouse_id, true);
 													if ($result < 0) {
 														$this->errors[] = $this->langs->trans("ECommerceErrorWhenMovementStockOnDifferentWarehouse");
 														$error++;
@@ -4631,16 +4680,17 @@ class eCommerceSynchro
 	/**
 	 * Set movement stock for each product line on different warehouse
 	 *
-	 * @param	CommonObject	$object				Object handler
-	 * @param	array			$warehouseByLine	List of warehouse ID for each line
-	 * @param	boolean			$undoMovement		True to undo movements
-	 * @return	int									<0 if KO, >0 if OK
+	 * @param	CommonObject	$object					Object handler
+	 * @param	array			$warehouseByLine		List of warehouse ID for each line
+	 * @param	int				$default_warehouse_id	Default warehouse ID
+	 * @param	boolean			$undoMovement			True to undo movements
+	 * @return	int										<0 if KO, >0 if OK
 	 */
-	public function setLinesMovementStockOnDifferentWarehouse($object, $warehouseByLine, $undoMovement = false)
+	public function setLinesMovementStockOnDifferentWarehouse($object, $warehouseByLine, $default_warehouse_id, $undoMovement = false)
 	{
 		global $conf;
 
-		$canMakeMovement = !empty($warehouseByLine) && !empty($conf->stock->enabled);
+		$canMakeMovement = !empty($this->eCommerceSite->parameters['enable_warehouse_plugin_support']) && !empty($conf->stock->enabled);
 		if ($object->element == 'commande') {
 			$canMakeMovement &= !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1;
 			$movementLabel = $this->langs->trans($undoMovement ? "OrderCanceledInDolibarr" : "OrderValidatedInDolibarr", $object->ref);
@@ -4671,16 +4721,16 @@ class eCommerceSynchro
 			$error = 0;
 			$this->db->begin();
 			foreach ($object->lines as $line) {
-				if ($line->fk_product > 0) {
+				if ($line->fk_product > 0 && ($line->product_type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 					$remoteWarehouseId = isset($warehouseByLine[$line->id]) && $warehouseByLine[$line->id] > 0 ? $warehouseByLine[$line->id] : 0;
-					if (empty($remoteWarehouseId) && $line->product_type == Product::TYPE_PRODUCT) {
+					if (empty($remoteWarehouseId) && empty($default_warehouse_id)) {
 						$this->errors[] = $this->langs->trans("ECommerceErrorWarehouseIdNotSpecifiedForTheLine", $line->fk_product);
 						$error++;
 						break;
 					}
 
-					$warehouseId = isset($remoteWarehousesList[$remoteWarehouseId]['warehouse_id']) && $remoteWarehousesList[$remoteWarehouseId]['warehouse_id'] > 0 ? $remoteWarehousesList[$remoteWarehouseId]['warehouse_id'] : 0;
-					if ($remoteWarehouseId > 0 && empty($warehouseId)) {
+					$warehouseId = !empty($remoteWarehouseId) && isset($remoteWarehousesList[$remoteWarehouseId]['warehouse_id']) && $remoteWarehousesList[$remoteWarehouseId]['warehouse_id'] > 0 ? $remoteWarehousesList[$remoteWarehouseId]['warehouse_id'] : $default_warehouse_id;
+					if (!empty($remoteWarehouseId) && empty($warehouseId)) {
 						dol_syslog(__METHOD__ . ' Warehouse not configured for remote warehouse ID ' . $remoteWarehouseId . ' so we don\'t process this remote warehouse', LOG_WARNING);
 						continue;
 //						$this->errors[] = $this->langs->trans("ECommerceErrorWarehouseIdNotConfiguredForRemoteWarehouse", $remoteWarehouseId, $this->eCommerceSite->name);
@@ -4714,6 +4764,38 @@ class eCommerceSynchro
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Get warehouse from shipping method
+	 *
+	 * @param	array		$shipping_lines		List of shipping lines ID
+	 * @return	int								<0 if KO, =0 if not found, >0 if warehouse ID found
+	 */
+	public function getWarehouseFromShippingMethod($shipping_lines)
+	{
+		// Get all shipping methods
+		dol_include_once('/ecommerceng/class/data/eCommerceRemoteShippingZoneMethods.class.php');
+		$remote_shipping_methods = new eCommerceRemoteShippingZoneMethods($this->db);
+		$remoteShippingMethodsList = $remote_shipping_methods->get_all($this->eCommerceSite->id);
+		if (!is_array($remoteShippingMethodsList) && $remoteShippingMethodsList < 0) {
+			$this->errors[] = $remote_shipping_methods->errorsToString();
+			return -1;
+		}
+
+		foreach ($remoteShippingMethodsList as $key1 => $remote_shipping_zone_infos) {
+			foreach ($remote_shipping_zone_infos['methods'] as $key2 => $infos) {
+				foreach ($shipping_lines as $shipping_line) {
+					if ($infos['remote_instance_id'] == $shipping_line['instance_id'] &&
+						$infos['remote_method_id'] == $shipping_line['method_id']
+					) {
+						return (int) $infos['warehouse_id'];
+					}
+				}
+			}
+		}
+
+		return 0;
 	}
 
 	/**
@@ -5027,11 +5109,28 @@ class eCommerceSynchro
 											}
 										}
 
-										// Get warehouse ID
-										$warehouse_id = $this->eCommerceSite->parameters['order_actions']['valid_invoice_fk_warehouse'] > 0 && empty($warehouseByLine) ? $this->eCommerceSite->parameters['order_actions']['valid_invoice_fk_warehouse'] : 0;
-										if (empty($warehouse_id) && empty($warehouseByLine) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
-											$this->errors[] = $this->langs->trans('ECommerceErrorInvoiceValidateWarehouseNotConfigured');
-											$error++;
+										// Get default warehouse ID
+										$default_warehouse_id = 0;
+										if (!empty($this->eCommerceSite->parameters['enable_warehouse_depending_on_shipping_zone_method'])) {
+											$default_warehouse_id = $this->getWarehouseFromShippingMethod($order_data['shipping_lines']);
+											if ($default_warehouse_id < 0) {
+												$error++;
+											}
+										}
+										if (!$error && empty($default_warehouse_id)) {
+											$default_warehouse_id = max(0, (int) $this->eCommerceSite->parameters['order_actions']['valid_invoice_fk_warehouse']);
+										}
+
+										// Set validate warehouse ID if no warehouse plugin support activated and movement stock on validate order set
+										$warehouse_id = 0;
+										if (!$error && empty($this->eCommerceSite->parameters['enable_warehouse_plugin_support']) &&
+											!empty($conf->global->STOCK_CALCULATE_ON_BILL)
+										) {
+											$warehouse_id = $default_warehouse_id;
+											if (empty($warehouse_id)) {
+												$this->errors[] = $this->langs->trans('ECommerceErrorInvoiceValidateWarehouseNotConfigured');
+												$error++;
+											}
 										}
 
 										if ($isDepositType) {
@@ -5052,7 +5151,7 @@ class eCommerceSynchro
 												$this->errors = array_merge($this->errors, $invoice->errors);
 												$error++;
 											} else {
-												$result = $this->setLinesMovementStockOnDifferentWarehouse($invoice, $warehouseByLine);
+												$result = $this->setLinesMovementStockOnDifferentWarehouse($invoice, $warehouseByLine, $default_warehouse_id);
 												if ($result < 0) {
 													$this->errors[] = $this->langs->trans("ECommerceErrorWhenMovementStockOnDifferentWarehouse");
 													$error++;
@@ -5208,7 +5307,7 @@ class eCommerceSynchro
 												// Validate supplier invoice
 												if (!$error) {
 													// Get warehouse ID
-													$warehouse_id = $this->eCommerceSite->parameters['order_actions']['valid_supplier_invoice_fk_warehouse'] > 0 ? $this->eCommerceSite->parameters['order_actions']['valid_supplier_invoice_fk_warehouse'] : 0;
+													$warehouse_id = /*$this->eCommerceSite->parameters['order_actions']['valid_supplier_invoice_fk_warehouse'] > 0 ? $this->eCommerceSite->parameters['order_actions']['valid_supplier_invoice_fk_warehouse'] :*/ 0;
 
 													$result = $supplier_invoice->validate($this->user, '', $warehouse_id);
 													if ($result < 0) {
@@ -5840,11 +5939,28 @@ class eCommerceSynchro
 										}
 									}
 
-									// Get warehouse ID
-									$warehouse_id = $this->eCommerceSite->parameters['order_actions']['valid_invoice_fk_warehouse'] > 0 ? $this->eCommerceSite->parameters['order_actions']['valid_invoice_fk_warehouse'] : 0;
-									if (empty($warehouse_id) && empty($warehouseByLine) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
-										$this->errors[] = $this->langs->trans('ECommerceErrorInvoiceValidateWarehouseNotConfigured');
-										$error++;
+									// Get default warehouse ID
+									$default_warehouse_id = 0;
+									if (!empty($this->eCommerceSite->parameters['enable_warehouse_depending_on_shipping_zone_method'])) {
+										$default_warehouse_id = $this->getWarehouseFromShippingMethod($order_data['shipping_lines']);
+										if ($default_warehouse_id < 0) {
+											$error++;
+										}
+									}
+									if (!$error && empty($default_warehouse_id)) {
+										$default_warehouse_id = max(0, (int) $this->eCommerceSite->parameters['order_actions']['valid_invoice_fk_warehouse']);
+									}
+
+									// Set validate warehouse ID if no warehouse plugin support activated and movement stock on validate order set
+									$warehouse_id = 0;
+									if (!$error && empty($this->eCommerceSite->parameters['enable_warehouse_plugin_support']) &&
+										!empty($conf->global->STOCK_CALCULATE_ON_BILL)
+									) {
+										$warehouse_id = $default_warehouse_id;
+										if (empty($warehouse_id)) {
+											$this->errors[] = $this->langs->trans('ECommerceErrorInvoiceValidateWarehouseNotConfigured');
+											$error++;
+										}
 									}
 
 									// Validate invoice
@@ -5856,7 +5972,7 @@ class eCommerceSynchro
 											$this->errors = array_merge($this->errors, $invoice_refund->errors);
 											$error++;
 										} else {
-											$result = $this->setLinesMovementStockOnDifferentWarehouse($invoice_refund, $warehouseByLine);
+											$result = $this->setLinesMovementStockOnDifferentWarehouse($invoice_refund, $warehouseByLine, $default_warehouse_id);
 											if ($result < 0) {
 												$this->errors[] = $this->langs->trans("ECommerceErrorWhenMovementStockOnDifferentWarehouse");
 												$error++;

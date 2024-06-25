@@ -1686,6 +1686,7 @@ class eCommerceRemoteAccessWoocommerce
 		}
 
 		// Set shipping lines
+		$shipping_lines = [];
 		if (!empty($remote_data['shipping_lines'])) {
 			$shipment_service_id = $this->site->parameters['shipping_service'] > 0 ? $this->site->parameters['shipping_service'] : 0;
 			foreach ($remote_data['shipping_lines'] as $item) {
@@ -1733,6 +1734,10 @@ class eCommerceRemoteAccessWoocommerce
 				}
 
 				$items[] = $item_data;
+				$shipping_lines[$item['instance_id'] . '_' . $item['method_id']] = [
+					'instance_id' => $item['instance_id'],
+					'method_id' => $item['method_id'],
+				];
 			}
 		}
 
@@ -2111,6 +2116,7 @@ class eCommerceRemoteAccessWoocommerce
 			'payment_method_id' => $remote_data['payment_method'],
 			'payment_amount_ttc' => $remote_data['total'],
 			'fee_lines' => $fee_lines,
+			'shipping_lines' => $shipping_lines,
 			'refunds' => $refunds,
 			'extrafields' => [
 				"ecommerceng_online_payment_{$conf->entity}" => empty($remote_data['transaction_id']) ? 0 : 1,
@@ -2333,6 +2339,7 @@ class eCommerceRemoteAccessWoocommerce
 		}
 
 		// Set shipping lines
+		$shipping_lines = [];
 		if (!empty($remote_data['shipping_lines'])) {
 			$shipment_service_id = $this->site->parameters['shipping_service'] > 0 ? $this->site->parameters['shipping_service'] : 0;
 			foreach ($remote_data['shipping_lines'] as $item) {
@@ -2383,6 +2390,10 @@ class eCommerceRemoteAccessWoocommerce
 				$sum_total_ht += $item_data['total_ht'];
 
 				$items[] = $item_data;
+				$shipping_lines[$item['instance_id'] . '_' . $item['method_id']] = [
+					'instance_id' => $item['instance_id'],
+					'method_id' => $item['method_id'],
+				];
 			}
 		}
 
@@ -2541,6 +2552,7 @@ class eCommerceRemoteAccessWoocommerce
 			'total_ttc' => abs($remote_data['amount']),
 			'items' => $items,
 			'fee_lines' => $fee_lines,
+			'shipping_lines' => $shipping_lines,
 		];
 
 		return $refund;
@@ -3180,7 +3192,7 @@ class eCommerceRemoteAccessWoocommerce
 					if (!empty($this->site->parameters['extra_fields']['product']['activated']['mdt'][$cr_key])) {
 						$data_key = $this->site->parameters['extra_fields']['product']['values']['mdt'][$cr_key];
 						if (!empty($data_key)) {
-							$variationData['meta_data'][] = array('key' => $data_key, 'value' => $value);
+							$variationData['meta_data'][] = array('key' => $data_key, 'value' => (string) $value);
 						}
 					}
 
@@ -3451,7 +3463,7 @@ class eCommerceRemoteAccessWoocommerce
 					if (!empty($this->site->parameters['extra_fields']['product']['activated']['mdt'][$cr_key])) {
 						$data_key = $this->site->parameters['extra_fields']['product']['values']['mdt'][$cr_key];
 						if (!empty($data_key)) {
-							$productData['meta_data'][] = array('key' => $data_key, 'value' => $value);
+							$productData['meta_data'][] = array('key' => $data_key, 'value' => (string) $value);
 						}
 					}
 
@@ -5489,11 +5501,11 @@ class eCommerceRemoteAccessWoocommerce
 		// plugin warehouse support
 		if (!empty($this->site->parameters['enable_warehouse_plugin_support'])) {
 			$plugin_support = $this->site->parameters['enable_warehouse_plugin_support'];
-			if ($plugin_support == 'wmlim') {
-				$remote_warehouses = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'locations');
-			} else {
-				$remote_warehouses = $this->worpressclient->sendToApi(eCommerceClientApi::METHOD_GET, 'location');
-			}
+//			if ($plugin_support == 'wmlim') {
+//				$remote_warehouses = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'locations');
+//			} else {
+//				$remote_warehouses = $this->worpressclient->sendToApi(eCommerceClientApi::METHOD_GET, 'location');
+//			}
 			$remote_warehouses = $this->worpressclient->sendToApi(eCommerceClientApi::METHOD_GET, $plugin_support == 'wmlim' ? 'locations' : 'location');
 			if (!isset($remote_warehouses)) {
 				$this->errors[] = $langs->trans('ECommerceWoocommerceGetAllWoocommerceRemoteWarehouses', $this->site->name);
@@ -5515,6 +5527,82 @@ class eCommerceRemoteAccessWoocommerce
 
 		dol_syslog(__METHOD__ . ": end, return: ".json_encode($remoteWarehousesTable), LOG_DEBUG);
 		return $remoteWarehousesTable;
+	}
+
+	/**
+	 * Get all remote shipping zones
+	 *
+	 * @return array|false    List of remote shipping zones or false if error
+	 */
+	public function getAllRemoteShippingZones()
+	{
+		dol_syslog(__METHOD__ . ": Retrieve all Woocommerce remote shipping zones", LOG_DEBUG);
+		global $langs;
+		$remoteShippingZonesTable = [];
+
+		// plugin warehouse support
+		if (!empty($this->site->parameters['enable_warehouse_depending_on_shipping_zone_method'])) {
+			$remote_shipping_zones = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'shipping/zones');
+			if (!isset($remote_shipping_zones)) {
+				$this->errors[] = $langs->trans('ECommerceWoocommerceGetAllWoocommerceRemoteShippingModes', $this->site->name);
+				$this->errors[] = $this->client->errorsToString();
+				dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
+				return false;
+			}
+
+			foreach ($remote_shipping_zones as $infos) {
+				$key = $infos["id"];
+				$remoteShippingZonesTable[$key] = [
+					'remote_id' => $infos["id"],
+					'name' => $infos["name"],
+					'order' => $infos["order"],
+				];
+			}
+		}
+
+		dol_syslog(__METHOD__ . ": end, return: ".json_encode($remoteShippingZonesTable), LOG_DEBUG);
+		return $remoteShippingZonesTable;
+	}
+
+	/**
+	 * Get all remote shipping zone methods
+	 *
+	 * @param	integer			$remote_zone_id		Remote zone ID
+	 * @return	array|false							List of remote shipping zone methods or false if error
+	 */
+	public function getAllRemoteShippingZoneMethods($remote_zone_id)
+	{
+		dol_syslog(__METHOD__ . ": Retrieve all Woocommerce remote shipping zone methods - remote_zone_id: " . $remote_zone_id, LOG_DEBUG);
+		global $langs;
+		$remote_zone_id = (int) $remote_zone_id;
+		$remoteShippingZoneMethodsTable = [];
+
+		// plugin warehouse support
+		if (!empty($this->site->parameters['enable_warehouse_depending_on_shipping_zone_method'])) {
+			$remote_shipping_zones = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'shipping/zones/' . $remote_zone_id . '/methods');
+			if (!isset($remote_shipping_zones)) {
+				$this->errors[] = $langs->trans('ECommerceWoocommerceGetAllWoocommerceRemoteShippingZoneMethods', $this->site->name, $remote_zone_id);
+				$this->errors[] = $this->client->errorsToString();
+				dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
+				return false;
+			}
+
+			foreach ($remote_shipping_zones as $infos) {
+				$key = $infos["instance_id"] . '_' . $infos["method_id"];
+				$remoteShippingZoneMethodsTable[$key] = [
+					'instance_id' => $infos["instance_id"],
+					'title' => $infos["title"],
+					'order' => $infos["order"],
+					'enabled' => $infos["enabled"],
+					'method_id' => $infos["method_id"],
+					'method_title' => $infos["method_title"],
+					'method_description' => $infos["method_description"],
+				];
+			}
+		}
+
+		dol_syslog(__METHOD__ . ": end, return: ".json_encode($remoteShippingZoneMethodsTable), LOG_DEBUG);
+		return $remoteShippingZoneMethodsTable;
 	}
 
 	/**

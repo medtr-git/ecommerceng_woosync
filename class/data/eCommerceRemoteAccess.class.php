@@ -545,6 +545,33 @@ class eCommerceRemoteAccess
 	}
 
 	/**
+	 * Get all remote shipping zones
+	 *
+	 * @return array|false    List of remote shipping zones or false if error
+	 */
+	public function getAllRemoteShippingZones()
+	{
+		$result=$this->class->getAllRemoteShippingZones();
+		$this->error=$this->class->error;
+		$this->errors=$this->class->errors;
+		return $result;
+	}
+
+	/**
+	 * Get all remote shipping zone methods
+	 *
+	 * @param	integer			$remote_zone_id		Remote zone ID
+	 * @return	array|false    						List of remote shipping zone methods or false if error
+	 */
+	public function getAllRemoteShippingZoneMethods($remote_zone_id)
+	{
+		$result=$this->class->getAllRemoteShippingZoneMethods($remote_zone_id);
+		$this->error=$this->class->error;
+		$this->errors=$this->class->errors;
+		return $result;
+	}
+
+	/**
 	 * Get all webhooks
 	 *
 	 * @return array|false    List of webhooks or false if error

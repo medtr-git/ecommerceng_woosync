@@ -1,5 +1,11 @@
 # ChangeLog
 
+## [14.0.4] - 21-06-2024
+- Ajout de la synchronisation des Mode(s) d’expédition par zone
+- Ajout du choix de l'entrepot synchronisée en fonction du choix du mode d'expedition
+- Correction de la synchro des meta-données vers woocommerce en convertissant en string
+- Modification de l'ecran de parametrage de de l'onglet "stocks"
+
 ## [14.0.3] - 17-06-2024
 - Ajout version de PHP.
 
@@ -901,6 +907,7 @@
 - Initial version.
 
 
-[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.3...HEAD
+[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.4...HEAD
+[14.0.4]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.4
 [14.0.3]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.3
 [14.0.2]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.2
