@@ -375,8 +375,8 @@ if (is_object($site)) {
 					<td>
 						<?php if ($nbProductToUpdateDToE > 0) { ?>
 							<input type="submit" name="submit_dtoe_synchro_product" id="submit_dtoe_synchro_product"
-								   class="button"<?php print ($nbCategoriesToUpdateDToE > 0 || $nbCategoriesToUpdate > 0 || $nbProductToUpdate > 0 ? ' disabled="disabled"' : '') ?>
-								   value="<?php print ($nbCategoriesToUpdate > 0 || $nbProductToUpdate > 0 || $nbCategoriesToUpdateDToE > 0 ? $langs->trans('ECommerceSynchronizeProduct') . ' (' . ($nbProductToUpdate > 0 ? $langs->trans("SyncProductFirst") : $langs->trans("SyncCategFirst")) . ")" : $langs->trans('ECommerceSynchronizeProduct')) ?>">
+								   class="button"<?php print ($nbCategoriesToUpdateDToE > 0 ? ' disabled="disabled"' : '') ?>
+								   value="<?php print ($nbCategoriesToUpdateDToE > 0 ? $langs->trans('ECommerceSynchronizeProduct') . ' (' . ($nbProductToUpdate > 0 ? $langs->trans("SyncProductFirst") : $langs->trans("SyncCategFirst")) . ")" : $langs->trans('ECommerceSynchronizeProduct')) ?>">
 						<?php } ?>
 					</td>
 				<?php } ?>

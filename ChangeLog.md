@@ -1,5 +1,8 @@
 # ChangeLog
 
+## [14.0.5] - 25-06-2024
+- Debloque la possibilité de mettre a jour les produit de dolibarr vers WooCommerce même si la synchro descandant des categories et produits n'as pas été effectué
+
 ## [14.0.4] - 21-06-2024
 - Ajout de la synchronisation des Mode(s) d’expédition par zone
 - Ajout du choix de l'entrepot synchronisée en fonction du choix du mode d'expedition
@@ -907,7 +910,8 @@
 - Initial version.
 
 
-[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.4...HEAD
+[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.5...HEAD
+[14.0.5]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.5
 [14.0.4]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.4
 [14.0.3]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.3
 [14.0.2]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.2
