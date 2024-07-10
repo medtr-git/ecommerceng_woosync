@@ -1,5 +1,8 @@
 # ChangeLog
 
+## [14.0.6] - 10-07-2024
+- Correction compatibilité PHP 8.2
+
 ## [14.0.5] - 25-06-2024
 - Debloque la possibilité de mettre a jour les produit de dolibarr vers WooCommerce même si la synchro descandant des categories et produits n'as pas été effectué
 
@@ -910,7 +913,8 @@
 - Initial version.
 
 
-[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.5...HEAD
+[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.6...HEAD
+[14.0.6]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.6
 [14.0.5]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.5
 [14.0.4]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.4
 [14.0.3]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.3

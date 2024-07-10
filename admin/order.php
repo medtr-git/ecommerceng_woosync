@@ -644,7 +644,7 @@ if (!empty($object->parameters['order_actions']['create_order']) ||
                     print '<tr><td>' . "\n";
                     if ($lang != 'ec_none') print $lang . " : ";
                     // Zone to select email template
-                    if (count($email_templates[$lang == 'ec_none' ? '' : $lang]) > 0) {
+                    if (isset($email_templates[$lang == 'ec_none' ? '' : $lang]) && count($email_templates[$lang == 'ec_none' ? '' : $lang]) > 0) {
                         print $form->selectarray('mail_model_for_send_invoice_' . $lang . '_' . $key, $email_templates[$lang == 'ec_none' ? '' : $lang], $infos['mail_model_for_send_invoice'][$lang], 1, 0, 0, '', 0, 0, 0, '', ' minwidth200');
                     } else {
                         print '<select name="mail_model_for_send_invoice_' . $lang . '_' . $key . '" disabled="disabled"><option value="none">' . $langs->trans("NoTemplateDefined") . '</option></select>';    // Do not put 'disabled' on 'option' tag, it is already on 'select' and it makes chrome crazy.
