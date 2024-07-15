@@ -32,7 +32,7 @@ dol_include_once('/ecommerceng/lib/eCommerce.lib.php');
 dol_include_once('/ecommerceng/lib/opendsi_common.lib.php');
 dol_include_once('/ecommerceng/core/modules/modECommerceNg.class.php');
 
-$langs->loadLangs(array("admin", "orders", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "woocommerce@ecommerceng", "opendsi@ecommerceng"));
+$langs->loadLangs(array("admin", "orders", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "opendsi@ecommerceng"));
 
 if (!$user->admin) accessforbidden();
 

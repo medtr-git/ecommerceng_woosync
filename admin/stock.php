@@ -33,7 +33,7 @@ dol_include_once('/ecommerceng/class/html.formecommerceng.class.php');
 dol_include_once('/ecommerceng/class/data/eCommerceRemoteWarehouses.class.php');
 dol_include_once('/ecommerceng/class/data/eCommerceRemoteShippingZoneMethods.class.php');
 
-$langs->loadLangs(array("admin", "stocks", "ecommerce@ecommerceng", "woocommerce@ecommerceng", "opendsi@ecommerceng"));
+$langs->loadLangs(array("admin", "stocks", "ecommerce@ecommerceng", "opendsi@ecommerceng"));
 
 if (!$user->admin && !$user->rights->ecommerceng->site) accessforbidden();
 
