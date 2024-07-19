@@ -174,7 +174,6 @@ class eCommerceRemoteAccessWoocommerce
         global $langs;
 
         $langs->load("ecommerce@ecommerceng");
-        $langs->load("woocommerce@ecommerceng");
 
         $this->db = $db;
         $this->site = $site;
@@ -1484,7 +1483,7 @@ class eCommerceRemoteAccessWoocommerce
 		if (!isset(self::$languages_cached[$language])) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($language);
-			$outputlangs->loadLangs(array('main', 'ecommerce@ecommerceng', 'woocommerce@ecommerceng'));
+			$outputlangs->loadLangs(array('main', 'ecommerce@ecommerceng'));
 
 			self::$languages_cached[$language] = $outputlangs;
 		}

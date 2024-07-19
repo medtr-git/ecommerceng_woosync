@@ -532,7 +532,7 @@ function ecommerceng_add_extrafields($db, $langs, $extrafields, &$error) {
 function ecommerceng_update_woocommerce_attribute($db, $site)
 {
 	global $conf, $langs;
-	$langs->load('woocommerce@ecommerceng');
+	$langs->load('ecommerce@ecommerceng');
 
 	$db->begin();
 
@@ -611,7 +611,7 @@ function ecommerceng_update_woocommerce_attribute($db, $site)
 function ecommerceng_update_woocommerce_dict_tax($db, $site)
 {
 	global $conf, $langs;
-	$langs->load('woocommerce@ecommerceng');
+	$langs->load('ecommerce@ecommerceng');
 
 	$db->begin();
 
@@ -735,7 +735,7 @@ function ecommerceng_update_woocommerce_dict_tax($db, $site)
 function ecommerceng_update_payment_gateways($db, $site)
 {
     global $conf, $langs;
-    $langs->load('woocommerce@ecommerceng');
+    $langs->load('ecommerce@ecommerceng');
 
     dol_include_once('/ecommerceng/class/business/eCommerceSynchro.class.php');
     $synchro = new eCommerceSynchro($db, $site, 0, 0);
@@ -785,7 +785,7 @@ function ecommerceng_update_payment_gateways($db, $site)
 function ecommerceng_update_remote_warehouses($db, $site)
 {
 	global $conf, $langs;
-	$langs->load('woocommerce@ecommerceng');
+	$langs->load('ecommerce@ecommerceng');
 
 	if (empty($site->parameters['enable_warehouse_plugin_support'])) {
 		return 1;
@@ -856,7 +856,7 @@ function ecommerceng_update_remote_warehouses($db, $site)
 function ecommerceng_update_remote_shipping_zone_methods($db, $site)
 {
 	global $conf, $langs;
-	$langs->load('woocommerce@ecommerceng');
+	$langs->load('ecommerce@ecommerceng');
 
 	if (empty($site->parameters['enable_warehouse_depending_on_shipping_zone_method'])) {
 		return 1;

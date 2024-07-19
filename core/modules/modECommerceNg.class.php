@@ -117,7 +117,7 @@ class modECommerceNg extends DolibarrModules
         $easya_info = json_decode(file_get_contents(__DIR__.'/../../.easya_info.json'));
         $this->phpmin = explode('.', $easya_info->php_min_version);                    // Minimum version of PHP required by module
         $this->need_dolibarr_version = explode('.', $easya_info->dlb_min_version);    // Minimum version of Dolibarr required by module
-		$this->langfiles = array("ecommerce@ecommerceng", "woocommerce@ecommerceng");
+		$this->langfiles = array("ecommerce@ecommerceng");
 
 		// Constants
 		// List of particular constants to add when module is enabled
@@ -154,7 +154,7 @@ class modECommerceNg extends DolibarrModules
 
 		// Dictionaries
 		$this->dictionaries = array(
-			'langs' => 'woocommerce@ecommerceng',
+			'langs' => 'ecommerce@ecommerceng',
 			'tabname' => array(
 				MAIN_DB_PREFIX . "c_ecommerceng_tax_class",
 				MAIN_DB_PREFIX . "c_ecommerceng_tax_rate",
