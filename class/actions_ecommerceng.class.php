@@ -148,7 +148,6 @@ class ActionsECommerceNg
 			if ($action == 'confirm_update_company_from_ecommerce' && $confirm == 'yes' && $this->isCompanyLinkedToECommerce($object)) {
 				$site_id = GETPOST('siteid', 'int');
 				$langs->load('ecommerceng@ecommerceng');
-				$langs->load('woocommerce@ecommerceng');
 
 				$error = 0;
 				$object->db->begin();

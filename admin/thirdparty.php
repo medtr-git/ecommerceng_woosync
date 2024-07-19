@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php');
 dol_include_once('/ecommerceng/lib/eCommerce.lib.php');
 dol_include_once('/ecommerceng/admin/class/data/eCommerceDict.class.php');
 
-$langs->loadLangs(array("admin", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "woocommerce@ecommerceng", "opendsi@ecommerceng"));
+$langs->loadLangs(array("admin", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "opendsi@ecommerceng"));
 
 if (!$user->admin && !$user->rights->ecommerceng->site && !empty($conf->societe->enabled)) accessforbidden();
 

@@ -34,7 +34,7 @@ dol_include_once('/ecommerceng/lib/eCommerce.lib.php');
 dol_include_once('/ecommerceng/admin/class/data/eCommerceDict.class.php');
 dol_include_once('/ecommerceng/class/data/eCommercePaymentGateways.class.php');
 
-$langs->loadLangs(array("admin", "orders", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "woocommerce@ecommerceng", "opendsi@ecommerceng"));
+$langs->loadLangs(array("admin", "orders", "companies", "bills", "accountancy", "banks", "oauth", "ecommerce@ecommerceng", "opendsi@ecommerceng"));
 
 if (!$user->admin && !$user->rights->ecommerceng->site) accessforbidden();
 

@@ -101,7 +101,7 @@ $max_sites = count($sites);
 $num_sites = 0;
 
 if ($max_sites > 0) {
-	$langs->loadLangs(array('ecommerce@ecommerceng', 'woocommerce@ecommerceng'));
+	$langs->loadLangs(array('ecommerce@ecommerceng'));
 	$startTime = microtime(true);
 
 	foreach ($sites as $site) {
