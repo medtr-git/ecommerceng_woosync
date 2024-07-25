@@ -873,12 +873,14 @@ class ActionsECommerceNg
 					$this->errors[] = $product->errorsToString();
 					return -1;
 				} elseif ($result == 0) {
+                    $this->resprints = "1";
 					return 1;
 				}
 
 				if (isset($product->array_options['options_ecommerceng_stockable_product']) &&
 					$product->array_options['options_ecommerceng_stockable_product'] == 0
 				) {
+                    $this->resprints = "1";
 					return 1;
 				}
 			}
