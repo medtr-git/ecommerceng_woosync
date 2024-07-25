@@ -873,6 +873,7 @@ class ActionsECommerceNg
 					$this->errors[] = $product->errorsToString();
 					return -1;
 				} elseif ($result == 0) {
+                    //TODO remove after PR #30471 is accepted, this is a temporary patch
                     $this->resprints = "1";
 					return 1;
 				}
@@ -880,6 +881,7 @@ class ActionsECommerceNg
 				if (isset($product->array_options['options_ecommerceng_stockable_product']) &&
 					$product->array_options['options_ecommerceng_stockable_product'] == 0
 				) {
+                    //TODO remove after PR #30471 is accepted, this is a temporary patch
                     $this->resprints = "1";
 					return 1;
 				}
