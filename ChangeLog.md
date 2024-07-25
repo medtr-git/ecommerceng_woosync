@@ -1,5 +1,8 @@
 # ChangeLog
 
+## [14.0.7] - 25-07-2024
+- Correction compatibilité PHP 8.2
+
 ## [14.0.6] - 10-07-2024
 - Correction compatibilité PHP 8.2
 
