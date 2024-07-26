@@ -6752,7 +6752,7 @@ class eCommerceSynchro
 				$result = $this->addUpdateContact($object, $new_object, $result, $contact_type);
 				if ($result < 0) {
 					$error++;
-				} elseif ($update_object_socid && $contact_data['fk_soc'] > 0 && $third_party_id != $contact_data['fk_soc']) {
+				} elseif ($update_object_socid && ($contact_data['fk_soc'] ?? 0) > 0 && $third_party_id != ($contact_data['fk_soc'] ?? 0)) {
 					// Update thirdparty of the order
 					$object->socid = $contact_data['fk_soc'];
 					$result = $object->update($this->user);
@@ -7006,9 +7006,9 @@ class eCommerceSynchro
 		global $conf;
 
 		// Clean parameters
-		$socid = $contact_data['fk_soc'];
-		$lastname = trim($contact_data['lastname']);
-		$firstname = trim($contact_data['firstname']);
+		$socid = $contact_data['fk_soc'] ?? 0;
+		$lastname = trim($contact_data['lastname'] ?? '');
+		$firstname = trim($contact_data['firstname'] ?? '');
 		if (!empty($conf->global->ECOMMERCENG_UPPERCASE_LASTNAME)) {
 			$firstname = dol_ucwords(dol_strtolower($firstname));
 			$lastname = dol_strtoupper($lastname);

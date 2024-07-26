@@ -1063,7 +1063,7 @@ class eCommerceRemoteAccessWoocommerce
 		// Categories
 		$categories = [];
 		$parent_categories = is_array($parent_remote_data['categories']) ? $parent_remote_data['categories'] : array();
-		$categories_data = is_array($remote_data['categories']) ? $remote_data['categories'] : array();
+		$categories_data = is_array(($remote_data['categories'] ?? '')) ? $remote_data['categories'] : array();
 		$categories_data = array_merge($categories_data, $parent_categories);
 		foreach ($categories_data as $category) {
 			$categories[$category['id']] = $category['id'];
@@ -1201,7 +1201,7 @@ class eCommerceRemoteAccessWoocommerce
 			'url' => $isVariation && $product_variation_mode_all_to_one ? $parent_remote_data['permalink'] : $remote_data['permalink'],
 			// Stock
 			'stock_qty' => $remote_data['stock_quantity'] < 0 ? 0 : $remote_data['stock_quantity'],
-			'is_in_stock' => $remote_data['in_stock'],   // not used
+			'is_in_stock' => ($remote_data['in_stock'] ?? ''),   // not used
 			'language' => !empty($this->site->parameters['enable_product_plugin_wpml_support']) && isset($parent_remote_data) ? $remote_data['lang'] : '',
 			'translates' => $translates,
 			'variations' => $variations,
@@ -1834,7 +1834,7 @@ class eCommerceRemoteAccessWoocommerce
 		// Support store credits order (Advanced Coupons for WooCommerce)
 		if (is_array($remote_data['meta_data'])) {
 			$store_credits_service_label = $outlangs->transnoentitiesnoconv('ECommerceWooCommerceStoreCredit');
-			$store_credits_service_id = $this->site->parameters['acfw_store_credits_service'] > 0 ? $this->site->parameters['acfw_store_credits_service'] : 0;
+			$store_credits_service_id = ($this->site->parameters['acfw_store_credits_service'] ?? 0) > 0 ? $this->site->parameters['acfw_store_credits_service'] : 0;
 			foreach ($remote_data['meta_data'] as $meta) {
 				if ($meta['key'] == 'acfw_store_credits_order_paid') {
 					$items[] = [
