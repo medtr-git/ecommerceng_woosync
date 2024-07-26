@@ -6307,7 +6307,7 @@ class eCommerceSynchro
 			dol_syslog(__METHOD__ . ' Error=' . $this->errorsToString(), LOG_ERR);
 			return -1;
 		} else {
-			return $invoice_refund->id > 0 ? $invoice_refund->id : 0;
+			return ($invoice_refund->id ?? 0) > 0 ? $invoice_refund->id : 0;
 		}
 	}
 
@@ -6595,7 +6595,7 @@ class eCommerceSynchro
 						$product->fetch($fk_product);
 						$description = $product->description;
 					}
-					$description = dol_concatdesc($description, $item['additional_description']);
+					$description = dol_concatdesc($description, ($item['additional_description'] ?? ''));
 
 					// Define the buy price for margin calculation
 					if (isset($item['buy_price'])) {
@@ -6624,7 +6624,7 @@ class eCommerceSynchro
 						$table_line = 'facturedet';
 					}
 					$array_options = $this->getDefaultExtraFields($table_line, $this->eCommerceSite);
-					if (is_array($item['extrafields'])) {
+					if (isset($item['extrafields']) && is_array($item['extrafields'])) {
 						foreach ($item['extrafields'] as $extrafield => $extrafield_value) {
 							$array_options['options_' . $extrafield] = $extrafield_value;
 						}
@@ -6752,7 +6752,7 @@ class eCommerceSynchro
 				$result = $this->addUpdateContact($object, $new_object, $result, $contact_type);
 				if ($result < 0) {
 					$error++;
-				} elseif ($update_object_socid && ($contact_data['fk_soc'] ?? 0) > 0 && $third_party_id != ($contact_data['fk_soc'] ?? 0)) {
+				} elseif ($update_object_socid && ($contact_data['fk_soc'] ?? 0) > 0 && !empty($third_party_id) && $third_party_id != ($contact_data['fk_soc'] ?? 0)) {
 					// Update thirdparty of the order
 					$object->socid = $contact_data['fk_soc'];
 					$result = $object->update($this->user);
