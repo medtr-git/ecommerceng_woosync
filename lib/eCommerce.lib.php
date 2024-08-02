@@ -770,7 +770,11 @@ function ecommerceng_update_payment_gateways($db, $site)
             'payment_mode_id' => $currentPaymentGateways[$id]['payment_mode_id'] > 0 ? $currentPaymentGateways[$id]['payment_mode_id'] : 0,
             'bank_account_id' => $currentPaymentGateways[$id]['bank_account_id'] > 0 ? $currentPaymentGateways[$id]['bank_account_id'] : 0,
             'supplier_id' => $currentPaymentGateways[$id]['supplier_id'] > 0 ? $currentPaymentGateways[$id]['supplier_id'] : 0,
-        );
+			'create_invoice_payment' => $currentPaymentGateways[$id]['create_invoice_payment'] > 0 ? $currentPaymentGateways[$id]['create_invoice_payment'] : 0,
+			'mail_model_for_send_invoice' => $currentPaymentGateways[$id]['mail_model_for_send_invoice'],
+			'product_id_for_fee' => $currentPaymentGateways[$id]['product_id_for_fee'] > 0 ? $currentPaymentGateways[$id]['product_id_for_fee'] : 0,
+			'create_supplier_invoice_payment' => $currentPaymentGateways[$id]['create_supplier_invoice_payment'] > 0 ? $currentPaymentGateways[$id]['create_supplier_invoice_payment'] : 0
+		);
     }
 
     $result = $pay_gateways->set($site->id, $payment_gateways);
