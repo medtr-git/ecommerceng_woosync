@@ -1,5 +1,8 @@
 # ChangeLog
 
+## [14.0.7] - 01-08-2024
+- Correction de la synchro des modes de paiements
+
 ## [14.0.6] - 10-07-2024
 - Correction compatibilité PHP 8.2
 
@@ -913,7 +916,8 @@
 - Initial version.
 
 
-[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.6...HEAD
+[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.7...HEAD
+[14.0.7]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.7
 [14.0.6]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.6
 [14.0.5]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.5
 [14.0.4]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.4
