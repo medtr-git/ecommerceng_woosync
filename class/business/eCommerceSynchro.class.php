@@ -1087,7 +1087,9 @@ class eCommerceSynchro
                     }
                     else
                     {
+						dol_syslog(__METHOD__ . " - Error synchro categories for parent remote_id=".$categoryArray['parent_id'].", name=".$categoryArray['name'].", remote_id=".$categoryArray['category_id']." : " . $this->errorsToString());
                         $this->success[] = $nbgoodsunchronize . ' ' . $this->langs->trans('ECommerceSynchCategorySuccess');
+						if (isset($categoryArray['name'])) $this->errors[] =  "Category parent remote_id=".$categoryArray['parent_id'].", name=".$categoryArray['name'].", remote_id=".$categoryArray['category_id'];
 						eCommerceUtils::stopAndLogStopwatch($stopwatch_id);
 						return -1;
                     }
