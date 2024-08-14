@@ -117,16 +117,19 @@ class eCommerceSite // extends CommonObject
 	{
 		$stopwatch_id = eCommerceUtils::startAndLogStopwatch(__METHOD__);
 		$ids = array();
-		$sql = "SELECT remote_id FROM " . MAIN_DB_PREFIX . "ecommerce_product GROUP BY remote_id HAVING COUNT(*) > 1";
+		$sql = "SELECT fk_site, remote_id FROM " . MAIN_DB_PREFIX . "ecommerce_product GROUP BY fk_site, remote_id HAVING COUNT(*) > 1";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$ids[] = $obj->remote_id;
+				if (!isset($ids[$obj->fk_site])) $ids[$obj->fk_site] = [];
+				$ids[$obj->fk_site][] = $obj->remote_id;
 			}
 		}
 		if (!empty($ids)) {
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ecommerce_product WHERE remote_id IN (" . implode(',', $ids) . ")";
-			$this->db->query($sql);
+			foreach ($ids as $site_id => $remote_ids) {
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ecommerce_product WHERE fk_site = " . $site_id . " AND remote_id IN (" . implode(',', $remote_ids) . ")";
+				$this->db->query($sql);
+			}
 		}
 		eCommerceUtils::stopAndLogStopwatch($stopwatch_id);
 	}
