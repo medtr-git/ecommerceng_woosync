@@ -3,6 +3,7 @@
 ## [14.0.8] - 14-08-2024
 - Correction du nettoyage des id distants en doublons par site
 - Precision lors d'un message d'erreur lors de la synchro des categories
+- Correction d'une synchro du site vers dolibarr de produit avec creation lorsque le codebare est obligatoire, il est generé maintenant automatiquement
 
 ## [14.0.7] - 01-08-2024
 - Correction de la synchro des modes de paiements

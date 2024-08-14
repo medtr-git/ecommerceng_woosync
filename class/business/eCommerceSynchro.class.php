@@ -3526,6 +3526,7 @@ class eCommerceSynchro
 								$product->accountancy_code_buy_intra = isset($this->eCommerceSite->parameters['default_account']['accounting_service_buy_intra_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_buy_intra_account'] : $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT;
 								$product->accountancy_code_buy_export = isset($this->eCommerceSite->parameters['default_account']['accounting_service_buy_export_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_buy_export_account'] : $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT;
 							}
+							$product->barcode = -1;
 
 							$product->error = '';
 							$product->errors = array();
