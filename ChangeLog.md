@@ -1,5 +1,8 @@
 # ChangeLog
 
+## [14.0.9] - 20-08-2024
+- Correction du support WPML pour les produits traduits synchronisés via les crochets WEB
+
 ## [14.0.8] - 14-08-2024
 - Correction du nettoyage des id distants en doublons par site
 - Precision lors d'un message d'erreur lors de la synchro des categories
@@ -921,7 +924,8 @@
 - Initial version.
 
 
-[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.8...HEAD
+[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.9...HEAD
+[14.0.9]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.9
 [14.0.8]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.8
 [14.0.7]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.7
 [14.0.6]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.6
