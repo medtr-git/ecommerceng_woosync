@@ -36,17 +36,17 @@ class eCommercePendingWebHook
 	public $element = 'ecommercependingwebhook';
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-    /**
-     * @var string Error
-     */
-    public $error = '';
-    /**
-     * @var array Errors
-     */
-    public $errors = array();
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+	/**
+	 * @var string Error
+	 */
+	public $error = '';
+	/**
+	 * @var array Errors
+	 */
+	public $errors = array();
 	/**
 	 * @var array Warnings
 	 */
@@ -131,13 +131,13 @@ class eCommercePendingWebHook
 	const STATUS_WARNING = 3;
 
 	/**
-     * Constructor
-     *
-     * @param        DoliDB $db Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
+	 * Constructor
+	 *
+	 * @param        DoliDB $db Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
 
 		// List of long language codes for bank record status
 		$this->labelStatus = array(
@@ -154,7 +154,7 @@ class eCommercePendingWebHook
 			self::STATUS_ERROR => 'ECommerceWebHooksStatusShortError',
 			self::STATUS_WARNING => 'ECommerceWebHooksStatusShortWarning',
 		);
-    }
+	}
 
 	/**
 	 * Check if the data is OK
@@ -264,7 +264,7 @@ class eCommercePendingWebHook
 	 * @param 	int		$row_id		WebHook line ID
 	 * @return	int 				<0 if KO, >0 if OK
 	 */
-	public function delete($row_id  = 0)
+	public function delete($row_id = 0)
 	{
 		dol_syslog(__METHOD__ . " row_id=$row_id", LOG_DEBUG);
 
@@ -354,7 +354,7 @@ class eCommercePendingWebHook
 			", datep = '" . $this->db->idate($now) . "'" .
 			", error_msg = NULL" .
 			" WHERE rowid = " . $row_id .
-			" AND status IN (" . self::STATUS_ERROR . "," .self::STATUS_NOT_PROCESSED . "," . self::STATUS_WARNING . ")";
+			" AND status IN (" . self::STATUS_ERROR . "," . self::STATUS_NOT_PROCESSED . "," . self::STATUS_WARNING . ")";
 
 		$this->db->begin();
 
@@ -519,9 +519,7 @@ class eCommercePendingWebHook
 					return -2;
 				}
 			}
-		}
-
-		// Order
+		} // Order
 		elseif ($webhook_resource == 'order') {
 			if ($webhook_event == 'created' || $webhook_event == 'updated') {
 				$result = $synchro->synchronizeOrderFromData($data);
@@ -846,7 +844,7 @@ class eCommercePendingWebHook
 	 * @param   string          $sendcontext      	 'standard', 'emailing', ...
 	 * @return  int|string                           <0 if KO, result message if OK
 	 */
-	public function _sendEmail($subject, $sendto, $from, $body, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $sendtocc="", $sendtobcc="", $deliveryreceipt=0, $msgishtml=1, $errors_to='', $css='', $moreinheader='', $sendcontext='standard')
+	public function _sendEmail($subject, $sendto, $from, $body, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $sendtocc = "", $sendtobcc = "", $deliveryreceipt = 0, $msgishtml = 1, $errors_to = '', $css = '', $moreinheader = '', $sendcontext = 'standard')
 	{
 		global $langs, $dolibarr_main_url_root;
 		dol_syslog(__METHOD__ . " subject=$subject, sendto=$sendto, from=$from, body=$body, filename_list=".json_encode($filename_list).", mimetype_list=".json_encode($mimetype_list).", mimefilename_list=".json_encode($mimefilename_list).", sendtocc=$sendtocc, sendtobcc=$sendtobcc, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml, errors_to=$errors_to, css=$css, moreinheader=$moreinheader, sendcontext=$sendcontext", LOG_DEBUG);
@@ -1058,9 +1056,9 @@ class eCommercePendingWebHook
 	 * @param   int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
 	 * @return  string              Libelle du statut
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
 	/**
@@ -1070,7 +1068,7 @@ class eCommercePendingWebHook
 	 * @param   int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 * @return  string              Libelle du statut
 	 */
-	public function LibStatut($statut, $mode=0)
+	public function LibStatut($statut, $mode = 0)
 	{
 		global $langs;
 

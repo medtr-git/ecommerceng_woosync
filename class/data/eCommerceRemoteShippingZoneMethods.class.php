@@ -182,7 +182,7 @@ class eCommerceRemoteShippingZoneMethods
 	 * @return  array|int                           0 if not found, <0 if errors or array of infos
 	 * @throws  Exception
 	 */
-	public function get($site_id, $remote_instance_id=0, $remote_method_id='')
+	public function get($site_id, $remote_instance_id = 0, $remote_method_id = '')
 	{
 		global $conf;
 		dol_syslog(__METHOD__ . " site_id=$site_id, remote_instance_id=$remote_instance_id, remote_method_id=$remote_method_id");
