@@ -1024,22 +1024,42 @@ class eCommerceRemoteAccessWoocommerce
 		dol_syslog(__METHOD__ . " remote_data=" . json_encode($remote_data), LOG_DEBUG);
 		global $conf, $langs;
 
-		$multilangs = !empty($conf->global->MAIN_MULTILANGS) && !empty($this->site->parameters['enable_product_plugin_wpml_support']);
 		$this->errors = array();
-		$isVariation = isset($parent_remote_data) || $remote_data['parent_id'] > 0;
-		$parent_id = isset($parent_remote_data) ? $parent_remote_data['id'] : ($remote_data['parent_id'] > 0 ? $remote_data['parent_id'] : 0);
-		if ($isVariation && (empty($parent_remote_data) || ($multilangs && empty($parent_remote_data['translations']))) && !empty($parent_id)) {
-			$parent_remote_data = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'products/' . $parent_id);
-			if (!isset($parent_remote_data)) {
-				$this->errors[] = $langs->trans('ECommerceWoocommerceConvertRemoteObjectIntoDolibarrProduct', $this->site->name);
-				$this->errors[] = $this->client->errorsToString();
-				dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
-				return false;
+
+		$multilangs = !empty($conf->global->MAIN_MULTILANGS) && !empty($this->site->parameters['enable_product_plugin_wpml_support']);
+		if ($multilangs) {
+			if (empty($remote_data['translations']) || empty($remote_data['lang'])) {
+				$remote_data = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'products/' . $remote_data['id']);
+				if (!isset($remote_data)) {
+					$this->errors[] = $langs->trans('ECommerceWoocommerceConvertRemoteObjectIntoDolibarrProduct', $this->site->name);
+					$this->errors[] = $this->client->errorsToString();
+					dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
+					return false;
+				}
+			}
+			$min_remote_id = null;
+			if (!empty($remote_data['translations'])) {
+				foreach ($remote_data['translations'] as $l => $id) {
+					if (!isset($min_remote_id) || $id < $min_remote_id) $min_remote_id = $id;
+				}
+			}
+			if (isset($min_remote_id) && $min_remote_id != $remote_data['id']) {
+				$remote_data = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'products/' . $min_remote_id);
+				if (!isset($remote_data)) {
+					$this->errors[] = $langs->trans('ECommerceWoocommerceConvertRemoteObjectIntoDolibarrProduct', $this->site->name);
+					$this->errors[] = $this->client->errorsToString();
+					dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
+					return false;
+				}
 			}
 		}
-		if ($multilangs && empty($remote_data['translations'])) {
-			$remote_data = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'products/' . ($isVariation ? $parent_id . '/variations/' : '') . $remote_data['id']);
-			if (!isset($remote_data)) {
+
+		$parent_id = $remote_data['parent_id'] ?? 0;
+		if (empty($parent_id)) $parent_id = $parent_remote_data['id'] ?? 0;
+		$isVariation = $parent_id > 0;
+		if ($isVariation && (empty($parent_remote_data) || ($multilangs && (empty($parent_remote_data['translations']) || empty($parent_remote_data['lang']))) || $parent_remote_data['id'] != $parent_id)) {
+			$parent_remote_data = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'products/' . $parent_id);
+			if (!isset($parent_remote_data)) {
 				$this->errors[] = $langs->trans('ECommerceWoocommerceConvertRemoteObjectIntoDolibarrProduct', $this->site->name);
 				$this->errors[] = $this->client->errorsToString();
 				dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
@@ -1147,8 +1167,10 @@ class eCommerceRemoteAccessWoocommerce
 			$remote_parent_id = $remote_data['id'];
 		}
 
-		$translates = array();
+		$other_data = [];
+		$translates = [];
 		if ($multilangs) {
+			$translations_ids = [];
 			$language_list = $this->site->getLanguages();
 			foreach ($language_list as $remote_lang => $language) {
 				if ($remote_lang == 'ec_none') continue;
@@ -1166,7 +1188,7 @@ class eCommerceRemoteAccessWoocommerce
 					$translated_parent_product_data = null;
 					if ($isVariation) {
 						$translated_parent_product_data = $this->getProductLanguage($remote_parent_id, 0, $remote_lang);
-						if (!is_array($translated_product_data)) {
+						if (!is_array($translated_parent_product_data)) {
 							return false;
 						}
 					}
@@ -1178,6 +1200,7 @@ class eCommerceRemoteAccessWoocommerce
 						}
 						$translated_description = $this->replace4byte($translated_product_data['description']); // short_description
 						$found = true;
+						$translations_ids[] = (isset($translated_parent_product_data) ? $translated_parent_product_data['id'] . '|' : '') . $translated_product_data['id'];
 					}
 				}
 
@@ -1188,20 +1211,7 @@ class eCommerceRemoteAccessWoocommerce
 					);
 				}
 			}
-		}
-
-		// Get first remote id and parent remote id (multi-language support)
-		if ($multilangs) {
-			if (!empty($remote_data['translations']) && (!$isVariation || !empty($parent_remote_data['translations']))) {
-				$remote_parent_id = $isVariation ? min($parent_remote_data['translations']) : 0;
-				$remote_id = min($remote_data['translations']);
-				$remote_id = ($isVariation ? $remote_parent_id . '|' : '') . $remote_id;
-			} else {
-				$this->errors[] = $langs->trans('ECommerceWoocommerceConvertRemoteObjectIntoDolibarrProduct', $this->site->name);
-				$this->errors[] = "Don't found translates values into remote data";
-				dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
-				return false;
-			}
+			$other_data['translations_ids'] = $translations_ids;
 		}
 
 		$product = [
@@ -1225,7 +1235,7 @@ class eCommerceRemoteAccessWoocommerce
 			// Stock
 			'stock_qty' => $remote_data['stock_quantity'] < 0 ? 0 : $remote_data['stock_quantity'],
 			'is_in_stock' => $remote_data['in_stock'],   // not used
-			'language' => !empty($this->site->parameters['enable_product_plugin_wpml_support']) && isset($parent_remote_data) ? $remote_data['lang'] : '',
+			'language' => !empty($this->site->parameters['enable_product_plugin_wpml_support']) ? $remote_data['lang'] : '',
 			'translates' => $translates,
 			'variations' => $variations,
 			'has_variations' => !empty($remote_data['variations']) || $remote_data['type'] == 'variable',
@@ -1237,38 +1247,8 @@ class eCommerceRemoteAccessWoocommerce
 				"ecommerceng_wc_manage_stock_{$this->site->id}_{$conf->entity}" => !empty($remote_data['manage_stock']) ? 1 : 0,
 				"ecommerceng_stockable_product" => $remote_data['type'] == 'woosb' ? 0 : 1,
 			],
+			'other_data' => $other_data,
 		];
-
-		if ($multilangs) {
-			$translations_ids = [];
-			if (!empty($remote_data['translations'])) {
-				foreach ($remote_data['translations'] as $l => $id) {
-					if ($id == $remote_data['id']) continue;
-					$translations_ids[] = $id;
-				}
-				if ($isVariation && !empty($translations_ids)) {
-					$nb_max_by_request = empty($conf->global->ECOMMERCENG_MAXSIZE_MULTICALL) ? 100 : min($conf->global->ECOMMERCENG_MAXSIZE_MULTICALL, 100);
-					$filters = [
-						'per_page' => $nb_max_by_request,
-						'include' => implode(',', $translations_ids),
-					];
-
-					$page = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'products', [GuzzleHttp\RequestOptions::QUERY => $filters]);
-					if (!isset($page)) {
-						$this->errors[] = $langs->trans('ECommerceWoocommerceConvertRemoteObjectIntoDolibarrProduct', $this->site->name);
-						$this->errors[] = $this->client->errorsToString();
-						dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
-						return false;
-					}
-
-					$translations_ids = [];
-					foreach ($page as $product) {
-						$translations_ids[] = $product['parent_id'] . '|' . $product['id'];
-					}
-				}
-			}
-			$product['other_data'] = ['translations_ids' => $translations_ids];
-		}
 
 		// Synchronize ref
 		if ($productRefSynchDirection == 'etod' || $productRefSynchDirection == 'all') {
@@ -1315,6 +1295,11 @@ class eCommerceRemoteAccessWoocommerce
 			$images_data = is_array($images_data) ? $images_data : array();
 			// Image of the variation
 			if ($isVariation && !empty($remote_data['image'])) $images_data[] = $remote_data['image'];
+			if ($isVariation && !empty($remote_data['images'])) {
+				foreach ($remote_data['images'] as $image) {
+					$images_data[] = $image;
+				}
+			}
 
 			if (!empty($images_data)) {
 				$media_url = $this->site->webservice_address . (substr($this->site->webservice_address, -1, 1) != '/' ? '/' : '') . 'wp-content/uploads/';
