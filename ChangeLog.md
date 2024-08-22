@@ -1,5 +1,9 @@
 # ChangeLog
 
+## [14.0.11] - 22-08-2024
+- Correction et amelioration du support WPML pour les produits variables traduits synchronisés
+- Correction de warnings et divers
+
 ## [14.0.10] - 21-08-2024
 - Correction et amelioration du support WPML pour les produits traduits synchronisés via les crochets WEB
 
@@ -9,7 +13,7 @@
 ## [14.0.8] - 14-08-2024
 - Correction du nettoyage des id distants en doublons par site
 - Precision lors d'un message d'erreur lors de la synchro des categories
-- Correction d'une synchro du site vers dolibarr de produit avec creation lorsque le codebare est obligatoire, il est generé maintenant automatiquement
+- Correction d'une synchro du site vers dolibarr de produit avec creation lorsque le code-barre est obligatoire, il est generé maintenant automatiquement
 
 ## [14.0.7] - 01-08-2024
 - Correction de la synchro des modes de paiements
@@ -927,7 +931,8 @@
 - Initial version.
 
 
-[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.10...HEAD
+[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.11...HEAD
+[14.0.11]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.11
 [14.0.10]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.10
 [14.0.9]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.9
 [14.0.8]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.8

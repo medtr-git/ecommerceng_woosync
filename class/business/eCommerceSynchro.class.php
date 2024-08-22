@@ -3183,7 +3183,7 @@ class eCommerceSynchro
 								$this->errors[] = $this->langs->trans('ECommerceErrorFetchProductLinkByProductId', $product->id, $this->eCommerceSite->id);
 								$this->errors[] = $this->eCommerceProduct->error;
 								$error++;
-							} elseif ($result > 0 && strpos($product_data['remote_id'], '|') === false && preg_match('/^' . preg_quote($product_data['remote_id'] . '|') . '/', $this->eCommerceProduct->remote_id)) {
+							} elseif ($result > 0 && strpos($product_data['remote_id'], '|') === false && preg_match('/^' . preg_quote($product_data['remote_id'] . '|', '/') . '/', $this->eCommerceProduct->remote_id)) {
 								// Variation who is transformed to simple
 
 								// Get all product to unlink (product variations)
@@ -3208,7 +3208,7 @@ class eCommerceSynchro
 								}
 
 								$this->initECommerceProduct();
-							} elseif ($result > 0 && strpos($this->eCommerceProduct->remote_id, '|') === false && preg_match('/^' . preg_quote($this->eCommerceProduct->remote_id . '|') . '/', $product_data['remote_id'])) {
+							} elseif ($result > 0 && strpos($this->eCommerceProduct->remote_id, '|') === false && preg_match('/^' . preg_quote($this->eCommerceProduct->remote_id . '|', '/') . '/', $product_data['remote_id'])) {
 								// Simple who is transformed to variable
 								$result = $this->unlinkProduct($this->eCommerceSite->id, 0, $this->eCommerceProduct->remote_id);
 								if ($result < 0) {
@@ -3316,19 +3316,19 @@ class eCommerceSynchro
 							$product->note = $product->note_private;
 
 							if ($product->type == Product::TYPE_PRODUCT) {
-								$product->accountancy_code_sell = isset($this->eCommerceSite->parameters['default_account']['accounting_product_sold_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_sold_account'] : $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT;
-								$product->accountancy_code_sell_intra = isset($this->eCommerceSite->parameters['default_account']['accounting_product_sold_intra_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_sold_intra_account'] : $conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT;
-								$product->accountancy_code_sell_export = isset($this->eCommerceSite->parameters['default_account']['accounting_product_sold_export_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_sold_export_account'] : $conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT;
-								$product->accountancy_code_buy = isset($this->eCommerceSite->parameters['default_account']['accounting_product_buy_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_buy_account'] : $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT;
-								$product->accountancy_code_buy_intra = isset($this->eCommerceSite->parameters['default_account']['accounting_product_buy_intra_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_buy_intra_account'] : $conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT;
-								$product->accountancy_code_buy_export = isset($this->eCommerceSite->parameters['default_account']['accounting_product_buy_export_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_buy_export_account'] : $conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT;
+								$product->accountancy_code_sell = isset($this->eCommerceSite->parameters['default_account']['accounting_product_sold_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_sold_account'] : getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_ACCOUNT');
+								$product->accountancy_code_sell_intra = isset($this->eCommerceSite->parameters['default_account']['accounting_product_sold_intra_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_sold_intra_account'] : getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT');
+								$product->accountancy_code_sell_export = isset($this->eCommerceSite->parameters['default_account']['accounting_product_sold_export_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_sold_export_account'] : getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT');
+								$product->accountancy_code_buy = isset($this->eCommerceSite->parameters['default_account']['accounting_product_buy_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_buy_account'] : getDolGlobalString('ACCOUNTING_PRODUCT_BUY_ACCOUNT');
+								$product->accountancy_code_buy_intra = isset($this->eCommerceSite->parameters['default_account']['accounting_product_buy_intra_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_buy_intra_account'] : getDolGlobalString('ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT');
+								$product->accountancy_code_buy_export = isset($this->eCommerceSite->parameters['default_account']['accounting_product_buy_export_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_product_buy_export_account'] : getDolGlobalString('ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT');
 							} elseif ($product->type == Product::TYPE_SERVICE) {
-								$product->accountancy_code_sell = isset($this->eCommerceSite->parameters['default_account']['accounting_service_sold_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_sold_account'] : $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT;
-								$product->accountancy_code_sell_intra = isset($this->eCommerceSite->parameters['default_account']['accounting_service_sold_intra_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_sold_intra_account'] : $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT;
-								$product->accountancy_code_sell_export = isset($this->eCommerceSite->parameters['default_account']['accounting_service_sold_export_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_sold_export_account'] : $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT;
-								$product->accountancy_code_buy = isset($this->eCommerceSite->parameters['default_account']['accounting_service_buy_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_buy_account'] : $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT;
-								$product->accountancy_code_buy_intra = isset($this->eCommerceSite->parameters['default_account']['accounting_service_buy_intra_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_buy_intra_account'] : $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT;
-								$product->accountancy_code_buy_export = isset($this->eCommerceSite->parameters['default_account']['accounting_service_buy_export_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_buy_export_account'] : $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT;
+								$product->accountancy_code_sell = isset($this->eCommerceSite->parameters['default_account']['accounting_service_sold_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_sold_account'] : getDolGlobalString('ACCOUNTING_SERVICE_SOLD_ACCOUNT');
+								$product->accountancy_code_sell_intra = isset($this->eCommerceSite->parameters['default_account']['accounting_service_sold_intra_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_sold_intra_account'] : getDolGlobalString('ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT');
+								$product->accountancy_code_sell_export = isset($this->eCommerceSite->parameters['default_account']['accounting_service_sold_export_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_sold_export_account'] : getDolGlobalString('ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT');
+								$product->accountancy_code_buy = isset($this->eCommerceSite->parameters['default_account']['accounting_service_buy_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_buy_account'] : getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT');
+								$product->accountancy_code_buy_intra = isset($this->eCommerceSite->parameters['default_account']['accounting_service_buy_intra_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_buy_intra_account'] : getDolGlobalString('ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT');
+								$product->accountancy_code_buy_export = isset($this->eCommerceSite->parameters['default_account']['accounting_service_buy_export_account']) ? $this->eCommerceSite->parameters['default_account']['accounting_service_buy_export_account'] : getDolGlobalString('ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT');
 							}
 							$product->barcode = -1;
 
@@ -3353,12 +3353,12 @@ class eCommerceSynchro
 							foreach ($product_data['translates'] as $lang => $infos) {
 								if ($current_lang == $lang) {
 									$product->label = $infos['label'];
-									// $product->description = dol_htmlcleanlastbr($infos['description']);
-									// $product->other = '';
+									//$product->description = dol_htmlcleanlastbr($infos['description']);
+									//$product->other = '';
 								} else {
 									$product->multilangs[$lang]["label"] = $infos['label'];
-									// $product->multilangs[$lang]["description"] = dol_htmlcleanlastbr($infos['description']);
-									// $product->multilangs[$lang]["other"] = '';
+									$product->multilangs[$lang]["description"] = $product->multilangs[$lang]["description"] ?? ''; // dol_htmlcleanlastbr($infos['description'] ?? '');
+									$product->multilangs[$lang]["other"] = $product->multilangs[$lang]["other"] ?? '';
 								}
 							}
 

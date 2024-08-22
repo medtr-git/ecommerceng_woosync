@@ -892,12 +892,25 @@ class eCommerceRemoteAccessWoocommerce
 							'include' => implode(',', $requestVariations),
 						];
 
-						$variations = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'products/' . $product['id'] . '/variations', [GuzzleHttp\RequestOptions::QUERY => $variation_filters]);
+						$variations = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'products', [GuzzleHttp\RequestOptions::QUERY => $variation_filters]);
 						if (!isset($variations)) {
 							$this->errors[] = $langs->trans('ECommerceWoocommerceConvertRemoteObjectIntoDolibarrProductVariations', $this->site->name);
 							$this->errors[] = $this->client->errorsToString();
 							dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
 							return false;
+						}
+
+						if (empty($variations)) {
+							foreach ($requestVariations as $requestVariationsId) {
+								$variation = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'products/' . $requestVariationsId);
+								if (!isset($variation)) {
+									$this->errors[] = $langs->trans('ECommerceWoocommerceConvertRemoteObjectIntoDolibarrProductVariations', $this->site->name) . ' - Remote ID : ' . $requestVariationsId;
+									$this->errors[] = $this->client->errorsToString();
+									dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
+									return false;
+								}
+								$variations[] = $variation;
+							}
 						}
 
 						if (is_array($variations)) {
@@ -970,8 +983,9 @@ class eCommerceRemoteAccessWoocommerce
 		global $conf, $langs;
 
 		$this->errors = array();
-		$isVariation = isset($parent_remote_data) || $remote_data['parent_id'] > 0;
-		$parent_id = isset($parent_remote_data) ? $parent_remote_data['id'] : ($remote_data['parent_id'] > 0 ? $remote_data['parent_id'] : 0);
+		$parent_id = $remote_data['parent_id'] ?? 0;
+		if (empty($parent_id)) $parent_id = $parent_remote_data['id'] ?? 0;
+		$isVariation = $parent_id > 0;
 		if ($isVariation && empty($parent_remote_data)) {
 			$this->errors[] = $langs->trans('ECommerceWoocommerceErrorMissingParentRemoteDate');
 			dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
@@ -995,7 +1009,7 @@ class eCommerceRemoteAccessWoocommerce
 				$label .= ' - ';
 				// Attributes of the variation
 				if (!empty($remote_data['name'])) {
-					$label .= preg_replace('/^' . preg_quote($label) . '/', '', $remote_data['name']);
+					$label .= preg_replace('/^' . preg_quote($label, '/') . '/', '', $remote_data['name']);
 				} elseif (is_array($remote_data['attributes'])) {
 					$to_print = [];
 					foreach ($remote_data['attributes'] as $attribute) {
@@ -1005,7 +1019,7 @@ class eCommerceRemoteAccessWoocommerce
 				}
 			}
 		} else {
-			$label = $remote_data['name'];
+			$label = $remote_data['name'] ?? '';
 		}
 //		$label = dol_trunc($label, 255);
 
@@ -1026,17 +1040,26 @@ class eCommerceRemoteAccessWoocommerce
 
 		$this->errors = array();
 
+		if (empty($remote_data) || empty($remote_data['id'])) {
+			$this->errors[] = $langs->trans('ECommerceWoocommerceConvertRemoteObjectIntoDolibarrProduct', $this->site->name);
+			$this->errors[] = 'Remote data empty';
+			dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
+			return false;
+		}
+
 		$multilangs = !empty($conf->global->MAIN_MULTILANGS) && !empty($this->site->parameters['enable_product_plugin_wpml_support']);
-		if ($multilangs) {
-			if (empty($remote_data['translations']) || empty($remote_data['lang'])) {
-				$remote_data = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'products/' . $remote_data['id']);
-				if (!isset($remote_data)) {
-					$this->errors[] = $langs->trans('ECommerceWoocommerceConvertRemoteObjectIntoDolibarrProduct', $this->site->name);
-					$this->errors[] = $this->client->errorsToString();
-					dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
-					return false;
-				}
+
+		if (($multilangs && (empty($remote_data['translations']) || empty($remote_data['lang']))) || empty($remote_data['type'])) {
+			$remote_data = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, 'products/' . $remote_data['id']);
+			if (!isset($remote_data)) {
+				$this->errors[] = $langs->trans('ECommerceWoocommerceConvertRemoteObjectIntoDolibarrProduct', $this->site->name);
+				$this->errors[] = $this->client->errorsToString();
+				dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
+				return false;
 			}
+		}
+
+		if ($multilangs) {
 			$min_remote_id = null;
 			if (!empty($remote_data['translations'])) {
 				foreach ($remote_data['translations'] as $l => $id) {
@@ -1091,8 +1114,8 @@ class eCommerceRemoteAccessWoocommerce
 
 		// Categories
 		$categories = [];
-		$parent_categories = is_array($parent_remote_data['categories']) ? $parent_remote_data['categories'] : array();
-		$categories_data = is_array(($remote_data['categories'] ?? '')) ? $remote_data['categories'] : array();
+		$parent_categories = is_array($parent_remote_data['categories'] ?? '') ? $parent_remote_data['categories'] : array();
+		$categories_data = is_array($remote_data['categories'] ?? '') ? $remote_data['categories'] : array();
 		$categories_data = array_merge($categories_data, $parent_categories);
 		foreach ($categories_data as $category) {
 			$categories[$category['id']] = $category['id'];
@@ -1178,7 +1201,7 @@ class eCommerceRemoteAccessWoocommerce
 				$found = false;
 				if ($remote_lang == $remote_data['lang']) {
 					$translated_label = $label;
-					$translated_description = $this->replace4byte(empty($remote_data['description']) ? $parent_remote_data['description'] : $remote_data['description']);
+					$translated_description = $this->replace4byte(empty($remote_data['description']) ? $parent_remote_data['description'] ?? '' : $remote_data['description']);
 					$found = true;
 				} else {
 					$translated_product_data = $this->getProductLanguage($isVariation ? $remote_parent_id : $remote_data['id'], $isVariation ? $remote_data['id'] : 0, $remote_lang);
@@ -1200,7 +1223,7 @@ class eCommerceRemoteAccessWoocommerce
 						}
 						$translated_description = $this->replace4byte($translated_product_data['description']); // short_description
 						$found = true;
-						$translations_ids[] = (isset($translated_parent_product_data) ? $translated_parent_product_data['id'] . '|' : '') . $translated_product_data['id'];
+						$translations_ids[] = (!empty($translated_parent_product_data['id']) ? $translated_parent_product_data['id'] . '|' : '') . $translated_product_data['id'];
 					}
 				}
 
@@ -1231,7 +1254,7 @@ class eCommerceRemoteAccessWoocommerce
 			'categories' => $categories,
 			'price_min' => '',
 			'fk_country' => '',
-			'url' => $isVariation && $product_variation_mode_all_to_one ? $parent_remote_data['permalink'] : $remote_data['permalink'],
+			'url' => $isVariation && $product_variation_mode_all_to_one ? $parent_remote_data['permalink'] ?? '' : $remote_data['permalink'],
 			// Stock
 			'stock_qty' => $remote_data['stock_quantity'] < 0 ? 0 : $remote_data['stock_quantity'],
 			'is_in_stock' => ($remote_data['in_stock'] ?? ''),   // not used
@@ -1256,27 +1279,27 @@ class eCommerceRemoteAccessWoocommerce
 		}
 		// Synchronize short and long description
 		if ($productDescriptionSynchDirection == 'etod' || $productDescriptionSynchDirection == 'all') {
-			$product['extrafields']["ecommerceng_description_{$conf->entity}"] = $this->replace4byte(empty($remote_data['description']) ? $parent_remote_data['description'] : $remote_data['description']);
+			$product['extrafields']["ecommerceng_description_{$conf->entity}"] = $this->replace4byte(empty($remote_data['description']) ? $parent_remote_data['description'] ?? '' : $remote_data['description']);
 		}
 		if ($productShortDescriptionSynchDirection == 'etod' || $productShortDescriptionSynchDirection == 'all') {
-			$product['extrafields']["ecommerceng_short_description_{$conf->entity}"] = $this->replace4byte(empty($remote_data['short_description']) ? $parent_remote_data['short_description'] : $remote_data['short_description']);
+			$product['extrafields']["ecommerceng_short_description_{$conf->entity}"] = $this->replace4byte(empty($remote_data['short_description']) ? $parent_remote_data['short_description'] ?? '' : $remote_data['short_description']);
 		}
 		// Synchronize weight
 		if ($productWeightSynchDirection == 'etod' || $productWeightSynchDirection == 'all') {
-			$product['weight'] = empty($remote_data['weight']) ? $parent_remote_data['weight'] : $remote_data['weight'];
+			$product['weight'] = empty($remote_data['weight']) ? $parent_remote_data['weight'] ?? 0 : $remote_data['weight'];
 			$product['weight_units'] = $productWeightUnits;
 		}
 		// Synchronize weight
 		if ($productDimensionSynchDirection == 'etod' || $productDimensionSynchDirection == 'all') {
-			$product['width'] = empty($remote_data['dimensions']['width']) ? $parent_remote_data['dimensions']['width'] : $remote_data['dimensions']['width'];
+			$product['width'] = empty($remote_data['dimensions']['width']) ? $parent_remote_data['dimensions']['width'] ?? 0 : $remote_data['dimensions']['width'];
 			$product['width_units'] = $productDimensionUnits;
-			$product['height'] = empty($remote_data['dimensions']['height']) ? $parent_remote_data['dimensions']['height'] : $remote_data['dimensions']['height'];
+			$product['height'] = empty($remote_data['dimensions']['height']) ? $parent_remote_data['dimensions']['height'] ?? 0 : $remote_data['dimensions']['height'];
 			$product['height_units'] = $productDimensionUnits;
-			$product['length'] = empty($remote_data['dimensions']['length']) ? $parent_remote_data['dimensions']['length'] : $remote_data['dimensions']['length'];
+			$product['length'] = empty($remote_data['dimensions']['length']) ? $parent_remote_data['dimensions']['length'] ?? 0 : $remote_data['dimensions']['length'];
 			$product['length_units'] = $productDimensionUnits;
 		}
 		// Synchronize tax
-		$tax_info = $this->getTaxInfoFromTaxClass(empty($remote_data['tax_class']) ? $parent_remote_data['tax_class'] : $remote_data['tax_class'], empty($remote_data['tax_status']) ? $parent_remote_data['tax_status'] : $remote_data['tax_status']);
+		$tax_info = $this->getTaxInfoFromTaxClass(empty($remote_data['tax_class']) ? $parent_remote_data['tax_class'] ?? '' : $remote_data['tax_class'], empty($remote_data['tax_status']) ? $parent_remote_data['tax_status'] ?? '' : $remote_data['tax_status']);
 		if (!$isVariation) $product['tax_rate'] = $tax_info['tax_rate'];
 		if ($productTaxSynchDirection == 'etod' || $productTaxSynchDirection == 'all') {
 			if ($isVariation) $product['tax_rate'] = $tax_info['tax_rate'];
@@ -1284,15 +1307,15 @@ class eCommerceRemoteAccessWoocommerce
 		}
 		// Synchronize status
 		if ($productStatusSynchDirection == 'etod' || $productStatusSynchDirection == 'all') {
-			$product['extrafields']["ecommerceng_wc_status_{$this->site->id}_{$conf->entity}"] = empty($remote_data['status']) ? $parent_remote_data['status'] : $remote_data['status'];
+			$product['extrafields']["ecommerceng_wc_status_{$this->site->id}_{$conf->entity}"] = empty($remote_data['status']) ? $parent_remote_data['status'] ?? '' : $remote_data['status'];
 		}
 		// Synchronize images
 		if ($productImageSynchDirection == 'etod' || $productImageSynchDirection == 'all') {
 			$images = [];
 
 			// Image of the product or the parent product if is a variation
-			$images_data = $isVariation ? $parent_remote_data['images'] : $remote_data['images'];
-			$images_data = is_array($images_data) ? $images_data : array();
+			$images_data = $isVariation ? $parent_remote_data['images'] ?? [] : $remote_data['images'];
+			$images_data = is_array($images_data) ? $images_data : [];
 			// Image of the variation
 			if ($isVariation && !empty($remote_data['image'])) $images_data[] = $remote_data['image'];
 			if ($isVariation && !empty($remote_data['images'])) {
@@ -2609,37 +2632,38 @@ class eCommerceRemoteAccessWoocommerce
 	{
 		global $langs;
 
-		if (!isset($this->product_language_cached[$remote_product_id][$remote_product_variation_id][$language]) || $forced) {
-			$remote_product = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, "products/{$remote_product_id}" . (!empty($remote_product_variation_id) ? "/variations/{$remote_product_variation_id}" : ""));
+		$remote_id = $remote_product_variation_id;
+		if (empty($remote_id)) $remote_id = $remote_product_id;
+
+		if (!isset($this->product_language_cached[$remote_id]) || $forced) {
+			$remote_product = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, "products/" . $remote_id);
 			if (!isset($remote_product)) {
-				$this->errors[] = $langs->trans('ECommerceWoocommerceGetRemoteProduct', $remote_product_id . (!empty($remote_product_variation_id) ? "|{$remote_product_variation_id}" : ""), $this->site->name);
+				$this->errors[] = $langs->trans('ECommerceWoocommerceGetRemoteProduct', $remote_id, $this->site->name);
 				$this->errors[] = $this->client->errorsToString();
 				dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
 				return false;
 			}
 
-			if ($remote_product['lang'] != $language) {
-				$found = false;
-				foreach ($remote_product['translations'] as $k => $v) {
-					if ($k == $language) {
-						$sub_remote_product = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, "products/" . (empty($remote_product_variation_id) ? $v : $remote_product_id) . (!empty($remote_product_variation_id) ? "/variations/" . $v : ""));
-						if (!isset($sub_remote_product)) {
-							$this->errors[] = $langs->trans('ECommerceWoocommerceGetRemoteProduct', $v . (!empty($remote_product_variation_id) ? "|{$remote_product_variation_id}" : ""), $this->site->name);
-							$this->errors[] = $this->client->errorsToString();
-							dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
-							return false;
-						}
-						$found = true;
-						break;
-					}
-				}
-				$remote_product = $found && !empty($sub_remote_product) ? $sub_remote_product : array();
-			}
+			$language_list = $this->site->getLanguages();
+			foreach ($language_list as $remote_lang => $lang) {
+				$id = $remote_product['translations'][$remote_lang] ?? 0;
 
-			$this->product_language_cached[$remote_product_id][$remote_product_variation_id][$language] = $remote_product;
+				if (empty($id) || $id == $remote_product['id']) {
+					$this->product_language_cached[$remote_id][$remote_lang] = $remote_product;
+				} else {
+					$sub_remote_product = $this->client->sendToApi(eCommerceClientApi::METHOD_GET, "products/" . $id);
+					if (!isset($sub_remote_product)) {
+						$this->errors[] = $langs->trans('ECommerceWoocommerceGetRemoteProduct', $id, $this->site->name);
+						$this->errors[] = $this->client->errorsToString();
+						dol_syslog(__METHOD__ . ': Error:' . $this->errorsToString(), LOG_ERR);
+						return false;
+					}
+					$this->product_language_cached[$remote_id][$remote_lang] = $sub_remote_product;
+				}
+			}
 		}
 
-		return $this->product_language_cached[$remote_product_id][$remote_product_variation_id][$language];
+		return $this->product_language_cached[$remote_id][$language] ?? [];
 	}
 
 	/**
