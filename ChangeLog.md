@@ -1,5 +1,9 @@
 # ChangeLog
 
+## [14.0.12] - 30-08-2024
+- Correction et amelioration du support WPML pour les produits variables traduits synchronisés
+- Correction de la recuperation de l'id du pays pour les code pays des domtom
+
 ## [14.0.11] - 22-08-2024
 - Correction et amelioration du support WPML pour les produits variables traduits synchronisés
 - Correction de warnings et divers
@@ -931,7 +935,8 @@
 - Initial version.
 
 
-[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.11...HEAD
+[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.12...HEAD
+[14.0.12]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.12
 [14.0.11]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.11
 [14.0.10]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.10
 [14.0.9]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.9

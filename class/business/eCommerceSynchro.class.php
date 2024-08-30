@@ -3690,10 +3690,15 @@ class eCommerceSynchro
 								}
 							}
 						}
+					}
 
+					if (!$error && (!$bypass ||
+							count(array_diff($this->eCommerceProduct->other_data['translations_ids'] ?? [], $product_data['other_data']['translations_ids'] ?? [])) > 0 ||
+							count(array_diff($product_data['other_data']['translations_ids'] ?? [], $this->eCommerceProduct->other_data['translations_ids'] ?? [])) > 0)
+					) {
 						// Update the link of the synchronization
 						//--------------------------------------------
-						if (!$error && !empty($product_data['remote_id'])) {
+						if (!empty($product_data['remote_id'])) {
 							$this->eCommerceProduct->last_update = $product_data['last_update'];
 							if ($this->eCommerceSite->stock_sync_direction == 'ecommerce2dolibarr') $this->eCommerceProduct->last_update_stock = $product_data['last_update'];
 							$this->eCommerceProduct->fk_product = $product->id > 0 ? $product->id : 0;

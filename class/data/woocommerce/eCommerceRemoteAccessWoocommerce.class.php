@@ -620,7 +620,7 @@ class eCommerceRemoteAccessWoocommerce
 			'address' => $remote_data['billing']['address_1'] . (!empty($remote_data['billing']['address_1']) && !empty($remote_data['billing']['address_2']) ? "\n" : "") . $remote_data['billing']['address_2'],
 			'zip' => $remote_data['billing']['postcode'],
 			'town' => $remote_data['billing']['city'],
-			'country_id' => getCountry($remote_data['billing']['country'], 3),
+			'country_id' => $this->getCountryId($remote_data['billing']['country'], 3),
 			'phone' => $remote_data['billing']['phone'],
 			'default_lang' => $mysoc->default_lang,
 			'remote_datas' => $remote_data,
@@ -740,7 +740,7 @@ class eCommerceRemoteAccessWoocommerce
 				'address' => $bContact['address_1'] . (!empty($bContact['address_1']) && !empty($bContact['address_2']) ? "\n" : "") . $bContact['address_2'],
 				'zip' => $bContact['postcode'],
 				'town' => $bContact['city'],
-				'country_id' => getCountry($bContact['country'], 3),
+				'country_id' => $this->getCountryId($bContact['country'], 3),
 				'email' => !empty($bContact['email']) ? $bContact['email'] : $remoteCompany['email'],
 				'phone' => $bContact['phone'],
 				'fax' => null,
@@ -776,7 +776,7 @@ class eCommerceRemoteAccessWoocommerce
 					'address' => $sContact['address_1'] . (!empty($sContact['address_1']) && !empty($sContact['address_2']) ? "\n" : "") . $sContact['address_2'],
 					'zip' => $sContact['postcode'],
 					'town' => $sContact['city'],
-					'country_id' => getCountry($sContact['country'], 3),
+					'country_id' => $this->getCountryId($sContact['country'], 3),
 					'email' => null,
 					'phone' => null,
 					'fax' => null,
@@ -2027,7 +2027,7 @@ class eCommerceRemoteAccessWoocommerce
 			'address' => $bContact['address_1'] . (!empty($bContact['address_1']) && !empty($bContact['address_2']) ? "\n" : "") . $bContact['address_2'],
 			'zip' => $bContact['postcode'],
 			'town' => $bContact['city'],
-			'country_id' => getCountry($bContact['country'], 3),
+			'country_id' => $this->getCountryId($bContact['country'], 3),
 			'email' => $bContact['email'],
 			'phone' => $bContact['phone'],
 			'fax' => null,
@@ -2078,7 +2078,7 @@ class eCommerceRemoteAccessWoocommerce
 					'address' => $sContact['address_1'] . (!empty($sContact['address_1']) && !empty($sContact['address_2']) ? "\n" : "") . $sContact['address_2'],
 					'zip' => $sContact['postcode'],
 					'town' => $sContact['city'],
-					'country_id' => getCountry($sContact['country'], 3),
+					'country_id' => $this->getCountryId($sContact['country'], 3),
 					'email' => $email,
 					'phone' => isset($sContact['phone']) ? $sContact['phone'] : null,
 					'fax' => null,
@@ -4109,7 +4109,7 @@ class eCommerceRemoteAccessWoocommerce
 					'city' => $object->town,                       // string   City name.
 					//'state'         => '',                                  // string   ISO code or name of the state, province or district.
 					'postcode' => $object->zip,                        // string   Postal code.
-					'country' => getCountry($object->country_id, 2),  // string   ISO code of the country.
+					'country' => $this->getCountryId($object->country_id, 2),  // string   ISO code of the country.
 					'email' => $object->email,                      // string   Email address.
 					'phone' => $object->phone_pro,                  // string   Phone number.
 				],
@@ -4127,7 +4127,7 @@ class eCommerceRemoteAccessWoocommerce
 					'city' => $object->town,                       // string   City name.
 					//'state'         => '',                                  // string   ISO code or name of the state, province or district.
 					'postcode' => $object->zip,                        // string   Postal code.
-					'country' => getCountry($object->country_id, 2),  // string   ISO code of the country.
+					'country' => $this->getCountryId($object->country_id, 2),  // string   ISO code of the country.
 				],
 			];
 		}
@@ -5828,6 +5828,40 @@ class eCommerceRemoteAccessWoocommerce
 
 		//dol_syslog(__METHOD__ . ": end", LOG_DEBUG);
 		return $dt;
+	}
+
+	/**
+	 * Get country ID from CODE.
+	 *
+	 * @param	string|int	$searchkey	Id or code of country to search
+	 * @param	string		$withcode	'0'=Return label,
+	 *									'1'=Return code + label,
+	 *									'2'=Return code from id,
+	 *									'3'=Return id from code,
+	 *									'all'=Return array('id'=>,'code'=>,'label'=>)
+	 *
+	 * @return	int|string				=0 if not found, >0 if OK
+	 */
+	private function getCountryId($searchkey, $withcode = '3')
+	{
+		// Translate country code for state in real country code
+		if ($withcode == 3) {
+			if (in_array($searchkey, [ 'MQ', 'YT', 'GP', 'GF', 'RE' ])) $searchkey = 'FR';
+		}
+
+		$result = getCountry($searchkey, $withcode);
+		if (empty($result) && $withcode == 2) {
+			$result = (int) $result;
+		} elseif ($result == 'NotDefined') {
+			$this->errors[] = "Country code $searchkey not found.";
+			dol_syslog(__METHOD__ . " - (Code: $searchkey, Mode: $withcode) " . $this->errorsToString(), LOG_ERR);
+		} elseif ($result == 'error') {
+			$this->errors[] = "Error when search country code.";
+			$this->errors[] = $this->db->lasterror();
+			dol_syslog(__METHOD__ . " - (Code: $searchkey, Mode: $withcode) " . $this->errorsToString(), LOG_ERR);
+		}
+
+		return $result;
 	}
 
 	public function __destruct()
