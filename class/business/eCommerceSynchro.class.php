@@ -2412,6 +2412,7 @@ class eCommerceSynchro
 
 		$this->error = '';
 		$this->errors = array();
+		$this->warnings = array();
 
 		try {
 			$order_data = $this->eCommerceRemoteAccess->convertOrderDataIntoProcessedData($raw_data);
@@ -2444,6 +2445,7 @@ class eCommerceSynchro
 
 		$this->error = '';
 		$this->errors = array();
+		$this->warnings = array();
 
 		try {
 			$product_data = $this->eCommerceRemoteAccess->convertProductDataIntoProcessedData($raw_data);
@@ -2523,6 +2525,7 @@ class eCommerceSynchro
 
 		$this->error = '';
 		$this->errors = array();
+		$this->warnings = array();
 		$error = 0;
 
 		if (empty($remote_id)) {

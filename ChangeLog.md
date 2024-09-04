@@ -1,5 +1,9 @@
 # ChangeLog
 
+## [14.0.13] - 04-08-2024
+- Correction du traitement des webhooks : produit puis commande dans l'ordre du plus recent au plus vieux
+- Correction affichage de l'ordre de la liste des Webhooks
+
 ## [14.0.12] - 30-08-2024
 - Correction et amelioration du support WPML pour les produits variables traduits synchronisés
 - Correction de la recuperation de l'id du pays pour les code pays des domtom
@@ -935,7 +939,8 @@
 - Initial version.
 
 
-[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.12...HEAD
+[Non Distribué]: https://github.com/OPEN-DSI/ecommerceng_woosync/compare/14.0.13...HEAD
+[14.0.13]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.13
 [14.0.12]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.12
 [14.0.11]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.11
 [14.0.10]: https://github.com/OPEN-DSI/ecommerceng_woosync/commits/14.0.10

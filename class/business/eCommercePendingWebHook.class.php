@@ -568,40 +568,41 @@ class eCommercePendingWebHook
 					return -1;
 				}
 
-				$sql = "SELECT epw.rowid, epw.site_id, epw.webhook_topic, epw.webhook_resource, epw.webhook_event, epw.webhook_data";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "ecommerce_pending_webhooks AS epw";
-//				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ecommerce_site AS es ON es.rowid = epw.site_id";
-				$sql .= " WHERE epw.status IN (" . self::STATUS_NOT_PROCESSED . ")";
-//				$sql .= " AND es.entity IN (" . getEntity('ecommerceng') . ")";
-				$sql .= " ORDER BY epw.webhook_topic DESC, epw.rowid DESC";
-
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					dolibarr_del_const($this->db, 'ECOMMERCE_PROCESSING_WEBHOOK_SYNCHRONIZATION', 0);
-					$this->error = 'Error ' . $this->db->lasterror();
-					$this->errors = array();
-					dol_syslog(__METHOD__ . " SQL: " . $sql . "; Error: " . $this->db->lasterror(), LOG_ERR);
-					return -1;
-				}
-
 				$stopwatch_id = eCommerceUtils::startAndLogStopwatch(__METHOD__);
 
-				while ($obj = $this->db->fetch_object($resql)) {
-					$result = $this->synchronize($obj->site_id, $obj->webhook_topic, $obj->webhook_resource, $obj->webhook_event, json_decode($obj->webhook_data, true));
-					if ($result > 0) $result = $this->setStatusProcessed($obj->rowid);
-					elseif ($result == -2) $this->setStatusWarning($obj->rowid, $this->warningsToString());
-					else $this->setStatusError($obj->rowid, $this->errorsToString());
-					if ($result == -2) {
-						$output .= $langs->trans('ECommerceWarningSynchronizeWebHook', $obj->rowid, $obj->webhook_topic) . ":<br>";
-						$output .= '<span style="color: orangered;">' . $langs->trans('Warning') . ': ' . $this->warningsToString() . '</span>' . "<br>";
+				foreach (['product', 'order'] as $resource) {
+					$sql = "SELECT epw.rowid, epw.site_id, epw.webhook_topic, epw.webhook_resource, epw.webhook_event, epw.webhook_data";
+					$sql .= " FROM " . MAIN_DB_PREFIX . "ecommerce_pending_webhooks AS epw";
+					//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ecommerce_site AS es ON es.rowid = epw.site_id";
+					$sql .= " WHERE epw.status IN (" . self::STATUS_NOT_PROCESSED . ")";
+					$sql .= " AND epw.webhook_resource = '" . $this->db->escape($resource) . "'";
+					//$sql .= " AND es.entity IN (" . getEntity('ecommerceng') . ")";
+					$sql .= " ORDER BY epw.webhook_topic DESC, epw.rowid DESC";
+
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$this->error = 'Error ' . $this->db->lasterror();
+						$this->errors = array();
 						$error++;
-					} elseif ($result < 0) {
-						$output .= $langs->trans('ECommerceErrorSynchronizeWebHook', $obj->rowid, $obj->webhook_topic) . ":<br>";
-						$output .= '<span style="color: red;">' . $langs->trans('Error') . ': ' . $this->errorsToString() . '</span>' . "<br>";
-						$error++;
+					} else {
+						while ($obj = $this->db->fetch_object($resql)) {
+							$result = $this->synchronize($obj->site_id, $obj->webhook_topic, $obj->webhook_resource, $obj->webhook_event, json_decode($obj->webhook_data, true));
+							if ($result > 0) $result = $this->setStatusProcessed($obj->rowid);
+							elseif ($result == -2) $this->setStatusWarning($obj->rowid, $this->warningsToString());
+							else $this->setStatusError($obj->rowid, $this->errorsToString());
+							if ($result == -2) {
+								$output .= $langs->trans('ECommerceWarningSynchronizeWebHook', $obj->rowid, $obj->webhook_topic) . ":<br>";
+								$output .= '<span style="color: orangered;">' . $langs->trans('Warning') . ': ' . $this->warningsToString() . '</span>' . "<br>";
+								$error++;
+							} elseif ($result < 0) {
+								$output .= $langs->trans('ECommerceErrorSynchronizeWebHook', $obj->rowid, $obj->webhook_topic) . ":<br>";
+								$output .= '<span style="color: red;">' . $langs->trans('Error') . ': ' . $this->errorsToString() . '</span>' . "<br>";
+								$error++;
+							}
+						}
+						$this->db->free($resql);
 					}
 				}
-				$this->db->free($resql);
 
 				eCommerceUtils::stopAndLogStopwatch($stopwatch_id);
 
@@ -610,6 +611,7 @@ class eCommercePendingWebHook
 				if ($error) {
 					$this->error = $output;
 					$this->errors = array();
+					dol_syslog(__METHOD__ . " SQL: " . $sql . "; Error: " . $this->db->lasterror(), LOG_ERR);
 					return -1;
 				} else {
 					$output .= $langs->trans('ECommerceSynchronizeWebHooksSuccess');
