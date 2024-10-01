@@ -93,7 +93,7 @@ $movement_stock_on_validate_invoice = !empty($conf->global->STOCK_CALCULATE_ON_B
 if ($action == 'set_options') {
 	$object->oldcopy = clone $object;
 
-	$object->stock_sync_direction = GETPOST('stock_sync_direction', 'az09');
+	$object->stock_sync_direction = GETPOST('stock_sync_direction', 'aZ09');
 	$object->parameters['enable_warehouse_plugin_support'] = $object->stock_sync_direction != 'none' ? GETPOST('enable_warehouse_plugin_support', 'aZ09') : '';
 	if ($object->parameters['enable_warehouse_plugin_support'] == -1) $object->parameters['enable_warehouse_plugin_support'] = '';
 	$object->fk_warehouse = $object->stock_sync_direction == 'ecommerce2dolibarr' && empty($object->parameters['enable_warehouse_plugin_support']) ? GETPOST('fk_warehouse', 'int') : 0;

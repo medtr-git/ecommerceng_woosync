@@ -171,7 +171,7 @@ if ($action == 'set_options') {
 	$object->parameters['realtime_dtoe']['order'] = GETPOST('realtime_dtoe_order', 'int') ? 1 : 0;
 	$object->parameters['order_actions']['create_invoice'] = GETPOST('create_invoice', 'int') ? 1 : 0;
 	$object->parameters['order_actions']['create_invoice_type'] = GETPOST('create_invoice_type', 'int');
-	$object->parameters['order_actions']['create_invoice_deposit_type'] = GETPOST('create_invoice_deposit_type', 'az09');
+	$object->parameters['order_actions']['create_invoice_deposit_type'] = GETPOST('create_invoice_deposit_type', 'aZ09');
 	$object->parameters['order_actions']['create_invoice_deposit_value'] = GETPOST('create_invoice_deposit_value', 'int');
 	$object->parameters['order_actions']['create_invoice_if_amount_0'] = GETPOST('create_invoice_if_amount_0', 'int') ? 1 : 0;
 	$object->parameters['order_actions']['send_invoice_by_mail'] = GETPOST('send_invoice_by_mail', 'int') ? 1 : 0;
@@ -180,7 +180,7 @@ if ($action == 'set_options') {
 	$object->parameters['order_first_date_etod'] = GETPOST('order_first_date_etod', 'alphanohtml') ? dol_mktime(0, 0, 0, GETPOST('order_first_date_etodmonth', 'int'), GETPOST('order_first_date_etodday', 'int'), GETPOST('order_first_date_etodyear', 'int')) : null;
 	$object->parameters['order_actions']['fee_line_as_item_line'] = GETPOST('fee_line_as_item_line', 'int') ? 1 : 0;
 	$object->parameters['order_metadata_product_lines_to_description_etod'] = GETPOST('order_metadata_product_lines_to_description_etod', 'int') ? 1 : 0;
-	$object->parameters['order_filter_mode_metadata_product_lines_to_description_etod'] = GETPOST('order_filter_mode_metadata_product_lines_to_description_etod', 'az09');
+	$object->parameters['order_filter_mode_metadata_product_lines_to_description_etod'] = GETPOST('order_filter_mode_metadata_product_lines_to_description_etod', 'aZ09');
 	$object->parameters['order_filter_keys_metadata_product_lines_to_description_etod'] = GETPOST('order_filter_keys_metadata_product_lines_to_description_etod', 'alphanohtml');
 	$object->parameters['order_actions']['order_note_into_public_note'] = GETPOST('order_note_into_public_note', 'int') ? 1 : 0;
 

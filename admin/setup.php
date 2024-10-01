@@ -75,7 +75,7 @@ if ($action == 'set_options') {
 	$object->name = GETPOST('site_name', 'alphanohtml');
 	$object->api_version = GETPOST('site_api_version', 'alphanohtml');
 	$object->webservice_address = GETPOST('site_webservice_address', 'alphanohtml');
-	$object->authentication_type = GETPOST('site_authentication_type', 'az09');
+	$object->authentication_type = GETPOST('site_authentication_type', 'aZ09');
 	$object->user_name = GETPOST('site_user_name', 'alphanohtml');
 	$object->user_password = GETPOST('site_user_password', 'none');
 	$object->timeout = GETPOST('site_timeout', 'int');
@@ -233,7 +233,7 @@ if ($action == 'set_options') {
 } elseif ($action == 'set_wordpress_api_options' && $object->id > 0) {
 	$object->oldcopy = clone $object;
 
-	$object->wordpress_authentication_type = GETPOST('wordpress_authentication_type', 'az09');
+	$object->wordpress_authentication_type = GETPOST('wordpress_authentication_type', 'aZ09');
 	$object->wordpress_authentication_login = !empty($object->wordpress_authentication_type) ? GETPOST('wordpress_authentication_login', 'none') : '';
 	$object->wordpress_authentication_password = !empty($object->wordpress_authentication_type) ? GETPOST('wordpress_authentication_password', 'none') : '';
 	$object->wordpress_timeout = !empty($object->wordpress_authentication_type) ? GETPOST('wordpress_timeout', 'int') : 0;
